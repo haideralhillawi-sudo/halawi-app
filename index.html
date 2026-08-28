@@ -1,6 +1,3 @@
-const HALAWI_APP_VERSION = "1.0.0";
-const HALAWI_UPDATE_URL =
-  "https://haideralhillawi-sudo.github.io/halawi-app/version.json";
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -3389,6 +3386,234 @@ initFirebaseSync();
   window.checkNotifications=checkNotifications;
 })();
 </script>
+<!-- ===== نظام التحديث التلقائي ===== -->
+<script>
+(function () {
+  'use strict';
 
+  const HALAWI_APP_VERSION = '1.0.0';
+
+  const HALAWI_VERSION_URL =
+    'https://haideralhillawi-sudo.github.io/halawi-app/version.json';
+
+  const HALAWI_UPDATE_URL =
+    'https://haideralhillawi-sudo.github.io/halawi-app/';
+
+  function compareVersions(a, b) {
+    const av = String(a || '0').split('.').map(Number);
+    const bv = String(b || '0').split('.').map(Number);
+
+    for (let i = 0; i < 3; i++) {
+      const x = av[i] || 0;
+      const y = bv[i] || 0;
+
+      if (x > y) return 1;
+      if (x < y) return -1;
+    }
+
+    return 0;
+  }
+
+  function createUpdateStyle() {
+    if (document.getElementById('halawi-update-style')) return;
+
+    const style = document.createElement('style');
+    style.id = 'halawi-update-style';
+
+    style.textContent = `
+      #halawi-update-overlay{
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,.58);
+        z-index:999999;
+        display:none;
+        align-items:center;
+        justify-content:center;
+        padding:20px;
+        direction:rtl;
+        font-family:Tahoma,"Segoe UI",Arial,sans-serif;
+      }
+
+      #halawi-update-overlay.show{
+        display:flex;
+      }
+
+      .halawi-update-card{
+        width:min(430px,95vw);
+        background:#fff;
+        border-radius:16px;
+        padding:25px;
+        box-shadow:0 15px 50px rgba(0,0,0,.3);
+        text-align:center;
+      }
+
+      .halawi-update-icon{
+        font-size:48px;
+        margin-bottom:8px;
+      }
+
+      .halawi-update-card h2{
+        margin:0 0 10px;
+        color:#184f95;
+        font-size:21px;
+      }
+
+      .halawi-update-card p{
+        margin:8px 0;
+        color:#52514e;
+        line-height:1.8;
+        font-size:13.5px;
+      }
+
+      .halawi-update-version{
+        background:#eef4fc;
+        border-radius:10px;
+        padding:10px;
+        margin:15px 0;
+        color:#184f95;
+        font-weight:bold;
+      }
+
+      .halawi-update-buttons{
+        display:flex;
+        gap:10px;
+        margin-top:15px;
+      }
+
+      .halawi-update-buttons button{
+        flex:1;
+        border:none;
+        border-radius:8px;
+        padding:11px;
+        cursor:pointer;
+        font-family:inherit;
+        font-weight:bold;
+        font-size:14px;
+      }
+
+      .halawi-update-now{
+        background:#0ca30c;
+        color:#fff;
+      }
+
+      .halawi-update-later{
+        background:#fff;
+        color:#184f95;
+        border:1px solid #2a78d6 !important;
+      }
+    `;
+
+    document.head.appendChild(style);
+  }
+
+  function createUpdateWindow(info) {
+    createUpdateStyle();
+
+    if (document.getElementById('halawi-update-overlay')) return;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'halawi-update-overlay';
+
+    const card = document.createElement('div');
+    card.className = 'halawi-update-card';
+
+    const message =
+      info.message ||
+      'يتوفر إصدار جديد من برنامج مكتبة الحلاوي.';
+
+    card.innerHTML = `
+      <div class="halawi-update-icon">🚀</div>
+
+      <h2>يتوفر تحديث جديد</h2>
+
+      <p>${message}</p>
+
+      <div class="halawi-update-version">
+        الإصدار الحالي:
+        ${HALAWI_APP_VERSION}
+        <br>
+        الإصدار الجديد:
+        ${info.version}
+      </div>
+
+      <div class="halawi-update-buttons">
+        <button class="halawi-update-now">
+          تحديث الآن
+        </button>
+
+        <button class="halawi-update-later">
+          لاحقًا
+        </button>
+      </div>
+    `;
+
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    overlay.classList.add('show');
+
+    card.querySelector('.halawi-update-now')
+      .addEventListener('click', function () {
+        const target =
+          info.updateUrl ||
+          HALAWI_UPDATE_URL;
+
+        window.location.href =
+          target +
+          (target.includes('?') ? '&' : '?') +
+          'update=' +
+          Date.now();
+      });
+
+    card.querySelector('.halawi-update-later')
+      .addEventListener('click', function () {
+        overlay.classList.remove('show');
+      });
+  }
+
+  async function checkForHalawiUpdate() {
+    try {
+      const response = await fetch(
+        HALAWI_VERSION_URL +
+        '?t=' +
+        Date.now(),
+        {
+          cache: 'no-store'
+        }
+      );
+
+      if (!response.ok) return;
+
+      const info = await response.json();
+
+      if (!info || !info.version) return;
+
+      if (compareVersions(
+        info.version,
+        HALAWI_APP_VERSION
+      ) > 0) {
+        createUpdateWindow(info);
+      }
+
+    } catch (error) {
+      console.log(
+        'تعذر التحقق من وجود تحديث:',
+        error
+      );
+    }
+  }
+
+  window.addEventListener(
+    'load',
+    function () {
+      setTimeout(
+        checkForHalawiUpdate,
+        1500
+      );
+    }
+  );
+
+})();
+</script>
 </body>
 </html>
