@@ -91,7 +91,10 @@
   .grid-2{grid-template-columns:1fr 1fr;}
   .grid-3{grid-template-columns:1fr 1fr 1fr;}
   .grid-4{grid-template-columns:1fr 1fr 1fr 1fr;}
-  @media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr 1fr;}}
+  .grid-5{grid-template-columns:1.6fr .8fr 1fr 1fr 1fr;}
+  @media(max-width:1100px){.grid-5{grid-template-columns:1fr 1fr 1fr;}}
+  @media(max-width:900px){.grid-2,.grid-3,.grid-4,.grid-5{grid-template-columns:1fr 1fr;}}
+  @media(max-width:600px){.grid-2,.grid-3,.grid-4,.grid-5{grid-template-columns:1fr;}}
 
   label{display:block;font-size:12.5px;color:var(--ink-2);margin-bottom:4px;font-weight:bold;}
   input[type=text],input[type=number],input[type=date],input[type=month],select{
@@ -850,6 +853,76 @@
         </div>
       </div>
 
+      <div class="card" id="debt-invoice-builder-card" style="border-top:3px solid var(--brand);">
+        <h3>🧾 إنشاء فاتورة دين للزبون - متعددة العناصر والأوقات</h3>
+        <p class="hint">يمكن للزبون نفسه امتلاك أكثر من فاتورة دين، ويمكن تسجيل كل مادة/عنصر بوقت وتاريخ مختلفين. التعديل والحذف محميان بالرمز السري.</p>
+        <div class="grid grid-3">
+          <div class="field">
+            <label>اسم الزبون *</label>
+            <input type="text" id="debt-inv-customer" placeholder="اسم الزبون">
+          </div>
+          <div class="field">
+            <label>رقم الهاتف</label>
+            <input type="text" id="debt-inv-phone" placeholder="رقم الهاتف">
+          </div>
+          <div class="field">
+            <label>ملاحظات الفاتورة</label>
+            <input type="text" id="debt-inv-note" placeholder="ملاحظات اختيارية">
+          </div>
+        </div>
+
+        <div class="card" style="margin:14px 0 0 0;background:var(--brand-bg);">
+          <h3 style="margin-bottom:10px;">➕ إضافة مادة/عنصر إلى فاتورة الدين</h3>
+          <div class="grid grid-5" style="align-items:end;">
+            <div class="field">
+              <label>المادة / العنصر *</label>
+              <input type="text" id="debt-item-name" placeholder="اسم المادة">
+            </div>
+            <div class="field">
+              <label>الكمية *</label>
+              <input type="number" id="debt-item-qty" min="1" step="1" value="1">
+            </div>
+            <div class="field">
+              <label>سعر الوحدة (د.ع) *</label>
+              <input type="number" id="debt-item-price" min="0" step="1" placeholder="0">
+            </div>
+            <div class="field">
+              <label>تاريخ المادة *</label>
+              <input type="date" id="debt-item-date">
+            </div>
+            <div class="field">
+              <label>وقت المادة *</label>
+              <input type="time" id="debt-item-time">
+            </div>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn" id="debt-add-item-btn">➕ إضافة العنصر</button>
+            <button type="button" class="btn secondary" id="debt-clear-item-btn">تفريغ العنصر</button>
+          </div>
+        </div>
+
+        <div class="table-wrap" style="margin-top:14px;">
+          <table>
+            <thead><tr><th>المادة / العنصر</th><th>الكمية</th><th>سعر الوحدة</th><th>المجموع</th><th>التاريخ</th><th>الوقت</th><th></th></tr></thead>
+            <tbody id="debt-draft-items-body"></tbody>
+          </table>
+        </div>
+
+        <div class="grid grid-2" style="margin-top:14px;">
+          <div class="stat-tile"><div class="v" id="debt-draft-total">0</div><div class="l">إجمالي الفاتورة (د.ع)</div></div>
+          <div class="field">
+            <label>الواصل / المدفوع مقدماً (د.ع)</label>
+            <input type="number" id="debt-inv-paid" min="0" step="1" value="0">
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn good" id="debt-inv-save-btn">💾 حفظ فاتورة الدين</button>
+          <button type="button" class="btn secondary" id="debt-inv-cancel-edit-btn" style="display:none;">إلغاء التعديل</button>
+        </div>
+        <p id="debt-inv-edit-status" class="hint" style="margin-top:8px;"></p>
+      </div>
+
       <div class="card">
         <h3>قائمة الديون الحالية والتسديد</h3>
         <div class="table-wrap">
@@ -1060,6 +1133,16 @@
       <div class="btn-row">
         <button type="button" class="btn print-list-btn no-print" id="rep-print-btn">🖨️ طباعة التقرير الحالي</button>
       </div>
+    </div>
+
+    <div class="card" id="daily-sales-notification-card" style="border-top:3px solid var(--brand);">
+      <h3>🔔 تقرير المبيعات اليومي الساعة 10 مساءً</h3>
+      <p class="hint">عند تفعيل الإشعارات سيظهر لك تقرير مبيعات اليوم تلقائياً الساعة 10:00 مساءً. يتضمن عدد الفواتير وإجمالي المبيعات. إذا كان البرنامج مغلقاً فلن يستطيع المتصفح تنفيذ مؤقت الصفحة، وسيتم فحص الإشعار عند فتح البرنامج مرة أخرى.</p>
+      <div class="btn-row" style="align-items:center;">
+        <button type="button" class="btn good" id="enable-daily-sales-notification-btn">🔔 تفعيل إشعار 10 مساءً</button>
+        <button type="button" class="btn secondary" id="test-daily-sales-notification-btn">🧪 تجربة التقرير الآن</button>
+      </div>
+      <p id="daily-sales-notification-status" class="hint" style="margin-top:8px;"></p>
     </div>
 
     <div id="rep-output"></div>
@@ -3351,6 +3434,7 @@ document.getElementById('bk-export-btn').addEventListener('click', ()=>{
     returns: RETURNS,
     purchases: PURCHASES,
     dailyIncome: DAILY_INCOME,
+    debts: (typeof DEBTS!=='undefined' ? DEBTS : []),
     counter: COUNTER
   };
   const json = JSON.stringify(backup, null, 2);
@@ -3395,7 +3479,7 @@ document.getElementById('bk-import-file').addEventListener('change', (e)=>{
     const exportedAt = data.meta && data.meta.exportedAt ? new Date(data.meta.exportedAt).toLocaleString('ar-IQ') : 'غير معروف';
     preview.innerHTML = `
       <div class="selected-preview show">
-        <p>📄 محتوى الملف: <b>${data.products.length}</b> مادة، <b>${data.invoices.length}</b> فاتورة، <b>${(data.returns||[]).length}</b> استرجاع، <b>${(data.purchases||[]).length}</b> فاتورة شراء، <b>${(data.dailyIncome||[]).length}</b> سجل دخل.<br>
+        <p>📄 محتوى الملف: <b>${data.products.length}</b> مادة، <b>${data.invoices.length}</b> فاتورة، <b>${(data.returns||[]).length}</b> استرجاع، <b>${(data.purchases||[]).length}</b> فاتورة شراء، <b>${(data.dailyIncome||[]).length}</b> سجل دخل، <b>${(data.debts||[]).length}</b> فاتورة دين.<br>
         تاريخ إنشاء النسخة: <b>${exportedAt}</b></p>
         <p style="color:var(--critical);"><b>⚠️ تنبيه: استيراد هذا الملف سيستبدل جميع البيانات الحالية في هذا الجهاز (${PRODUCTS.length} مادة، ${INVOICES.length} فاتورة) بالكامل ولا يمكن التراجع عنه إلا بنسخة احتياطية أخرى.</b></p>
         <div class="btn-row">
@@ -3419,6 +3503,7 @@ function doImport(){
   RETURNS = pendingImportData.returns || [];
   PURCHASES = pendingImportData.purchases || [];
   DAILY_INCOME = Array.isArray(pendingImportData.dailyIncome) ? pendingImportData.dailyIncome.map(normalizeIncomeRecord) : [];
+  if(typeof DEBTS!=='undefined') DEBTS = Array.isArray(pendingImportData.debts) ? pendingImportData.debts.map(normalizeDebtRecord) : [];
   COUNTER = pendingImportData.counter || { invoice: 1000 };
   if(!COUNTER.purchase) COUNTER.purchase = 1000;
   persistAll();
@@ -3545,18 +3630,24 @@ initFirebaseSync();
       tbody.innerHTML='<tr class="empty-row"><td colspan="6">لا توجد ديون مسجلة.</td></tr>';
       return;
     }
+    normalizeAllDebts();
     DEBTS.forEach((debt,index)=>{
+      const d=normalizeDebtRecord(debt);
+      const itemSummary=d.itemsList.length ? d.itemsList.map(it=>`${it.qty} × ${esc(it.name)}`).join('، ') : esc(d.items);
+      const invoiceNo=d.invoiceNumber || ('D-'+String(index+1).padStart(4,'0'));
       const tr=document.createElement('tr');
       tr.innerHTML=`
-        <td>${esc(debt.name)}</td>
-        <td>${esc(debt.phone)}</td>
-        <td>${esc(debt.items)}</td>
-        <td>${Number(debt.totalAmount||0)}</td>
-        <td style="color:var(--critical);font-weight:bold;">${Number(debt.remaining||0)}</td>
+        <td><b>${esc(d.name)}</b><br><small>${esc(invoiceNo)}</small></td>
+        <td>${esc(d.phone)}</td>
+        <td>${itemSummary}<br><small>${d.itemsList.length} عنصر</small></td>
+        <td>${fmtMoney(d.totalAmount)}</td>
+        <td style="color:var(--critical);font-weight:bold;">${fmtMoney(d.remaining)}</td>
         <td>
           <input type="number" id="pay-val-${index}" placeholder="المبلغ المسدد" min="0" style="width:120px;padding:5px;">
           <button class="btn sm good" type="button" data-debt-pay="${index}">تسديد</button>
-          <button class="btn sm secondary" type="button" data-debt-print="${index}">🖨️ طباعة</button>
+          <button class="btn sm secondary" type="button" data-debt-edit="${index}">✏️ تعديل</button>
+          <button class="btn sm secondary" type="button" data-debt-print-advanced="${index}">🖨️ طباعة الفاتورة</button>
+          <button class="btn sm secondary" type="button" data-debt-print="${index}">طباعة قديمة</button>
           <button class="btn sm danger" type="button" data-debt-delete="${index}">🗑️ حذف</button>
         </td>`;
       tbody.appendChild(tr);
@@ -3570,6 +3661,7 @@ initFirebaseSync();
     const remaining=Number(debt.remaining||0);
     if(val<=0 || val>remaining){ alert('مبلغ غير صحيح'); return; }
     debt.remaining=remaining-val;
+    debt.paidAmount=Number(debt.paidAmount||0)+val;
     if(!Array.isArray(debt.history)) debt.history=[];
     const d=new Date();
     debt.history.push({paid:val,date:d.toLocaleDateString('ar-IQ'),time:d.toLocaleTimeString('ar-IQ')});
@@ -3577,7 +3669,8 @@ initFirebaseSync();
     renderDebts();
   }
   function printDebtInvoice(index){
-    const d=DEBTS[index]; if(!d) return;
+    const d=normalizeDebtRecord(DEBTS[index]); if(!d) return;
+    if(Array.isArray(d.itemsList) && d.itemsList.length){ printAdvancedDebtInvoice(index); return; }
     const printContent=`<div style="direction:rtl;font-family:Tahoma;padding:20px;"><h2 style="text-align:center;">فاتورة ديون - مكتبة الحلاوي</h2><p><b>اسم الزبون:</b> ${esc(d.name)}</p><p><b>الهاتف:</b> ${esc(d.phone)}</p><p><b>التاريخ والوقت:</b> ${esc(d.date)} ${esc(d.time)}</p><p><b>المواد المشتراة:</b> ${esc(d.items)}</p><h3>المبلغ الكلي: ${Number(d.totalAmount||0)} د.ع</h3><h3 style="color:red;">المبلغ المتبقي للذمة: ${Number(d.remaining||0)} د.ع</h3></div>`;
     const w=window.open('','_blank','width=800,height=600');
     if(!w){ alert('تعذّر فتح نافذة الطباعة. اسمح بالنوافذ المنبثقة لهذا الملف.'); return; }
@@ -3586,6 +3679,7 @@ initFirebaseSync();
 
   function deleteDebt(index){
     const debt=DEBTS[index]; if(!debt) return;
+    normalizeDebtRecord(debt);
     const password=prompt('أدخل الرمز السري لحذف فاتورة الدين:');
     if(password===null) return;
     if(String(password).trim()!=='632759'){
@@ -3598,6 +3692,165 @@ initFirebaseSync();
     saveDebts();
     renderDebts();
     alert('تم حذف فاتورة الدين بنجاح.');
+  }
+
+  const DEBT_EDIT_PASSWORD = '632759';
+  let editingDebtId = null;
+  let debtDraftItems = [];
+
+  function normalizeDebtRecord(debt){
+    const d = debt || {};
+    if(!d.id) d.id = 'debt_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+    if(!Array.isArray(d.itemsList)){
+      const legacyText = String(d.items || '').trim();
+      d.itemsList = legacyText ? [{
+        id:'legacy_' + d.id, name:legacyText, qty:1, price:Number(d.totalAmount||0),
+        total:Number(d.totalAmount||0), date:d.date || todayValue(), time:d.time || timeValue()
+      }] : [];
+    } else {
+      d.itemsList = d.itemsList.map((it,i)=>({
+        id:it.id || (d.id+'_item_'+i),
+        name:String(it.name||''), qty:Number(it.qty||1), price:Number(it.price||0),
+        total:Number(it.total ?? ((Number(it.qty||1))*(Number(it.price||0)))),
+        date:String(it.date||d.date||todayValue()), time:String(it.time||d.time||timeValue())
+      }));
+    }
+    d.name = String(d.name||'');
+    d.phone = String(d.phone||'');
+    d.note = String(d.note||'');
+    d.date = d.date || (d.itemsList[0]?.date || todayValue());
+    d.time = d.time || (d.itemsList[0]?.time || timeValue());
+    d.totalAmount = Number(d.totalAmount || d.itemsList.reduce((s,it)=>s+Number(it.total||0),0));
+    d.paidAmount = Number(d.paidAmount ?? (d.totalAmount - Number(d.remaining||0)));
+    d.remaining = Number(d.remaining ?? Math.max(0,d.totalAmount-d.paidAmount));
+    if(!Array.isArray(d.history)) d.history=[];
+    return d;
+  }
+
+  function normalizeAllDebts(){ DEBTS = (Array.isArray(DEBTS)?DEBTS:[]).map(normalizeDebtRecord); }
+
+  function renderDebtDraftItems(){
+    const tbody=document.getElementById('debt-draft-items-body');
+    const totalEl=document.getElementById('debt-draft-total');
+    if(!tbody || !totalEl) return;
+    if(!debtDraftItems.length){
+      tbody.innerHTML='<tr class="empty-row"><td colspan="7">لم تتم إضافة مواد إلى فاتورة الدين بعد.</td></tr>';
+    }else{
+      tbody.innerHTML=debtDraftItems.map((it,idx)=>`<tr>
+        <td>${esc(it.name)}</td>
+        <td>${it.qty}</td>
+        <td>${fmtMoney(it.price)} د.ع</td>
+        <td><b>${fmtMoney(it.total)} د.ع</b></td>
+        <td>${esc(it.date)}</td>
+        <td>${esc(it.time)}</td>
+        <td><button type="button" class="btn sm danger" data-debt-draft-delete="${idx}">حذف</button></td>
+      </tr>`).join('');
+    }
+    totalEl.textContent=fmtMoney(debtDraftItems.reduce((s,it)=>s+Number(it.total||0),0));
+  }
+
+  function clearDebtItemInputs(){
+    ['debt-item-name','debt-item-price'].forEach(id=>{const e=document.getElementById(id); if(e)e.value='';});
+    const q=document.getElementById('debt-item-qty'); if(q)q.value='1';
+    const d=document.getElementById('debt-item-date'); if(d)d.value=todayValue();
+    const t=document.getElementById('debt-item-time'); if(t)t.value=timeValue();
+  }
+
+  function resetDebtInvoiceBuilder(){
+    editingDebtId=null; debtDraftItems=[];
+    ['debt-inv-customer','debt-inv-phone','debt-inv-note'].forEach(id=>{const e=document.getElementById(id); if(e)e.value='';});
+    const paid=document.getElementById('debt-inv-paid'); if(paid)paid.value='0';
+    const save=document.getElementById('debt-inv-save-btn'); if(save)save.textContent='💾 حفظ فاتورة الدين';
+    const cancel=document.getElementById('debt-inv-cancel-edit-btn'); if(cancel)cancel.style.display='none';
+    const status=document.getElementById('debt-inv-edit-status'); if(status)status.textContent='';
+    clearDebtItemInputs(); renderDebtDraftItems();
+  }
+
+  function addDebtDraftItem(){
+    const name=document.getElementById('debt-item-name')?.value.trim();
+    const qty=Number(document.getElementById('debt-item-qty')?.value||0);
+    const price=Number(document.getElementById('debt-item-price')?.value||0);
+    const date=document.getElementById('debt-item-date')?.value || todayValue();
+    const time=document.getElementById('debt-item-time')?.value || timeValue();
+    if(!name){alert('يرجى إدخال اسم المادة أو العنصر.');return;}
+    if(!Number.isFinite(qty)||qty<=0){alert('يرجى إدخال كمية صحيحة.');return;}
+    if(!Number.isFinite(price)||price<0){alert('يرجى إدخال سعر صحيح.');return;}
+    debtDraftItems.push({id:'item_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),name,qty,price,total:qty*price,date,time});
+    renderDebtDraftItems(); clearDebtItemInputs();
+  }
+
+  function deleteDebtDraftItem(index){
+    if(index<0||index>=debtDraftItems.length)return;
+    debtDraftItems.splice(index,1); renderDebtDraftItems();
+  }
+
+  function saveAdvancedDebtInvoice(){
+    const name=document.getElementById('debt-inv-customer')?.value.trim();
+    const phone=document.getElementById('debt-inv-phone')?.value.trim();
+    const note=document.getElementById('debt-inv-note')?.value.trim();
+    const paid=Number(document.getElementById('debt-inv-paid')?.value||0);
+    const total=debtDraftItems.reduce((s,it)=>s+Number(it.total||0),0);
+    if(!name){alert('يرجى إدخال اسم الزبون.');return;}
+    if(!debtDraftItems.length){alert('أضف مادة أو عنصراً واحداً على الأقل إلى فاتورة الدين.');return;}
+    if(!Number.isFinite(paid)||paid<0||paid>total){alert('الواصل لا يمكن أن يتجاوز إجمالي الفاتورة.');return;}
+
+    const first=debtDraftItems[0];
+    if(editingDebtId){
+      const index=DEBTS.findIndex(x=>String(x.id)===String(editingDebtId));
+      if(index<0){alert('تعذّر العثور على فاتورة الدين المطلوب تعديلها.');resetDebtInvoiceBuilder();return;}
+      const old=normalizeDebtRecord(DEBTS[index]);
+      old.name=name; old.phone=phone; old.note=note; old.itemsList=debtDraftItems.map(it=>({...it}));
+      old.items=old.itemsList.map(it=>`${it.qty} ${it.name}`).join('، ');
+      old.totalAmount=total; old.paidAmount=paid; old.remaining=Math.max(0,total-paid);
+      old.date=first.date; old.time=first.time; old.updatedAt=new Date().toISOString(); old.updatedBy=currentUser||'';
+      if(Array.isArray(old.history)) old.history=old.history.filter(h=>Number(h.paid||0)<=total);
+      DEBTS[index]=old;
+      saveDebts(); renderDebts(); resetDebtInvoiceBuilder();
+      alert('تم تعديل فاتورة الدين بنجاح.');
+      return;
+    }
+
+    const invoice={
+      id:'debt_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7),
+      name, phone, note, invoiceType:'debt',
+      invoiceNumber:'D-'+Date.now(),
+      itemsList:debtDraftItems.map(it=>({...it})),
+      items:debtDraftItems.map(it=>`${it.qty} ${it.name}`).join('، '),
+      totalAmount:total, paidAmount:paid, remaining:Math.max(0,total-paid),
+      date:first.date, time:first.time, createdAt:new Date().toISOString(), createdBy:currentUser||'',
+      history: paid>0 ? [{paid,date:first.date,time:first.time,by:currentUser||''}] : []
+    };
+    DEBTS.push(invoice);
+    saveDebts(); renderDebts(); resetDebtInvoiceBuilder();
+    alert('تم إنشاء فاتورة الدين بنجاح.');
+  }
+
+  function editDebt(index){
+    const debt=DEBTS[index]; if(!debt)return;
+    const pass=prompt('أدخل الرمز السري لتعديل فاتورة الدين:');
+    if(pass===null)return;
+    if(String(pass).trim()!==DEBT_EDIT_PASSWORD){alert('الرمز السري غير صحيح. لم يتم تعديل الفاتورة.');return;}
+    const d=normalizeDebtRecord(debt);
+    editingDebtId=d.id;
+    document.getElementById('debt-inv-customer').value=d.name||'';
+    document.getElementById('debt-inv-phone').value=d.phone||'';
+    document.getElementById('debt-inv-note').value=d.note||'';
+    document.getElementById('debt-inv-paid').value=Number(d.paidAmount||0);
+    debtDraftItems=d.itemsList.map(it=>({...it}));
+    document.getElementById('debt-inv-save-btn').textContent='💾 حفظ تعديل فاتورة الدين';
+    document.getElementById('debt-inv-cancel-edit-btn').style.display='inline-flex';
+    document.getElementById('debt-inv-edit-status').textContent=`✏️ جارٍ تعديل فاتورة الدين للزبون: ${d.name} - رقم ${d.invoiceNumber||d.id}`;
+    renderDebtDraftItems();
+    document.getElementById('debt-invoice-builder-card')?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function printAdvancedDebtInvoice(index){
+    const d=normalizeDebtRecord(DEBTS[index]); if(!d)return;
+    const rows=d.itemsList.map(it=>`<tr><td>${esc(it.name)}</td><td>${it.qty}</td><td>${fmtMoney(it.price)}</td><td>${fmtMoney(it.total)}</td><td>${esc(it.date)}</td><td>${esc(it.time)}</td></tr>`).join('');
+    const printContent=`<div style="direction:rtl;font-family:Tahoma;padding:20px;"><h2 style="text-align:center;">فاتورة دين - مكتبة الحلاوي</h2><p><b>رقم الفاتورة:</b> ${esc(d.invoiceNumber||d.id)}</p><p><b>اسم الزبون:</b> ${esc(d.name)}</p><p><b>الهاتف:</b> ${esc(d.phone)}</p><table style="width:100%;border-collapse:collapse;text-align:center;"><thead><tr><th style="border:1px solid #ccc;padding:6px;">المادة</th><th style="border:1px solid #ccc;padding:6px;">الكمية</th><th style="border:1px solid #ccc;padding:6px;">السعر</th><th style="border:1px solid #ccc;padding:6px;">المجموع</th><th style="border:1px solid #ccc;padding:6px;">التاريخ</th><th style="border:1px solid #ccc;padding:6px;">الوقت</th></tr></thead><tbody>${rows}</tbody></table><h3>الإجمالي: ${fmtMoney(d.totalAmount)} د.ع</h3><h3>الواصل: ${fmtMoney(d.paidAmount)} د.ع</h3><h3 style="color:red;">المتبقي: ${fmtMoney(d.remaining)} د.ع</h3>${d.note?`<p><b>ملاحظات:</b> ${esc(d.note)}</p>`:''}</div>`;
+    const w=window.open('','_blank','width=900,height=700');
+    if(!w){alert('تعذّر فتح نافذة الطباعة. اسمح بالنوافذ المنبثقة.');return;}
+    w.document.write(printContent);w.document.close();w.focus();w.print();
   }
 
   function addDebt(){
@@ -3621,7 +3874,7 @@ initFirebaseSync();
     try{
       if(typeof fbDbRef==='undefined' || !fbDbRef) return;
       if(typeof applyingRemoteUpdate!=='undefined' && applyingRemoteUpdate) return;
-      fbDbRef.child('debts').set(DEBTS).catch(()=>{});
+      fbDbRef.update({debts:DEBTS}).catch(()=>{});
     }catch(e){}
   }
   function initDebtSync(){
@@ -3631,11 +3884,103 @@ initFirebaseSync();
         const val=snap.val();
         if(Array.isArray(val)){
           DEBTS=val;
-          localStorage.setItem(DEBTS_KEY,JSON.stringify(DEBTS));
-          renderDebts();
+        }else if(val && typeof val==='object'){
+          DEBTS=Object.values(val);
+        }else{
+          return;
         }
+        normalizeAllDebts();
+        localStorage.setItem(DEBTS_KEY,JSON.stringify(DEBTS));
+        renderDebts();
       });
     }catch(e){}
+  }
+
+  /* =======================================================================
+     DAILY SALES REPORT NOTIFICATION - 10:00 PM
+     يعمل تلقائياً أثناء بقاء البرنامج مفتوحاً، ويفحص الإشعار عند العودة للبرنامج.
+     ======================================================================= */
+  const DAILY_SALES_NOTIF_ENABLED_KEY='HALAWI_DAILY_SALES_NOTIF_ENABLED';
+  const DAILY_SALES_NOTIF_LAST_SENT_KEY='HALAWI_DAILY_SALES_NOTIF_LAST_SENT';
+  let dailySalesNotifTimer=null;
+
+  function getDailySalesSummary(dateStr){
+    const invoices=(typeof INVOICES!=='undefined'&&Array.isArray(INVOICES)?INVOICES:[]).filter(inv=>String(inv.date||'')===String(dateStr));
+    let revenue=0, pieces=0;
+    invoices.forEach(inv=>{
+      (inv.items||[]).forEach(it=>{
+        const eff=typeof invoiceRemainingQty==='function' ? invoiceRemainingQty(it) : Number(it.qty||0);
+        if(eff>0){ pieces+=eff; revenue+=eff*Number(it.price||0); }
+      });
+    });
+    return {date:dateStr,invoiceCount:invoices.length,revenue,pieces};
+  }
+
+  function updateDailySalesNotificationStatus(message){
+    const el=document.getElementById('daily-sales-notification-status');
+    if(el) el.textContent=message||'';
+  }
+
+  function browserNotifyDailySales(dateStr,force=false){
+    const summary=getDailySalesSummary(dateStr);
+    const last=localStorage.getItem(DAILY_SALES_NOTIF_LAST_SENT_KEY)||'';
+    if(!force && last===dateStr) return false;
+    const body=`التاريخ: ${displayDateFromStr(dateStr)} | عدد الفواتير: ${summary.invoiceCount} | إجمالي المبيعات: ${fmtMoney(summary.revenue)} د.ع | القطع: ${summary.pieces}`;
+    try{
+      if('Notification' in window && Notification.permission==='granted'){
+        new Notification('📊 تقرير المبيعات اليومي - مكتبة الحلاوي',{body});
+      }else{
+        alert(`📊 تقرير المبيعات اليومي\n\n${body}`);
+      }
+      localStorage.setItem(DAILY_SALES_NOTIF_LAST_SENT_KEY,dateStr);
+      updateDailySalesNotificationStatus(`آخر تقرير تم إرساله: ${displayDateFromStr(dateStr)} الساعة 10:00 مساءً`);
+      return true;
+    }catch(e){
+      console.error('Daily sales notification error',e);
+      return false;
+    }
+  }
+
+  async function enableDailySalesNotifications(){
+    if(!('Notification' in window)){
+      updateDailySalesNotificationStatus('هذا المتصفح لا يدعم إشعارات سطح المكتب.');
+      return;
+    }
+    try{
+      const permission=await Notification.requestPermission();
+      if(permission==='granted'){
+        localStorage.setItem(DAILY_SALES_NOTIF_ENABLED_KEY,'1');
+        updateDailySalesNotificationStatus('✅ تم تفعيل تقرير المبيعات اليومي الساعة 10:00 مساءً.');
+        scheduleDailySalesNotification();
+      }else{
+        updateDailySalesNotificationStatus('⚠️ لم يتم السماح بالإشعارات. فعّلها من إعدادات المتصفح ثم جرّب مرة أخرى.');
+      }
+    }catch(e){ updateDailySalesNotificationStatus('تعذّر تفعيل الإشعارات.'); }
+  }
+
+  function scheduleDailySalesNotification(){
+    clearTimeout(dailySalesNotifTimer);
+    if(localStorage.getItem(DAILY_SALES_NOTIF_ENABLED_KEY)!=='1') return;
+    const now=new Date();
+    const next=new Date(now);
+    next.setHours(22,0,0,0);
+    if(next<=now) next.setDate(next.getDate()+1);
+    dailySalesNotifTimer=setTimeout(()=>{
+      const day=todayValue();
+      browserNotifyDailySales(day,false);
+      scheduleDailySalesNotification();
+    },Math.max(1000,next-now));
+  }
+
+  function checkMissedDailySalesNotification(){
+    if(localStorage.getItem(DAILY_SALES_NOTIF_ENABLED_KEY)!=='1') return;
+    const now=new Date();
+    if(now.getHours()<22) return;
+    const day=todayValue();
+    const last=localStorage.getItem(DAILY_SALES_NOTIF_LAST_SENT_KEY)||'';
+    if(last!==day){
+      setTimeout(()=>browserNotifyDailySales(day,false),1200);
+    }
   }
 
   document.addEventListener('DOMContentLoaded',()=>{
@@ -3658,16 +4003,41 @@ initFirebaseSync();
     });
     const saveBtn=document.getElementById('debt-save-btn');
     if(saveBtn) saveBtn.addEventListener('click',addDebt);
+
+    document.getElementById('debt-add-item-btn')?.addEventListener('click',addDebtDraftItem);
+    document.getElementById('debt-clear-item-btn')?.addEventListener('click',clearDebtItemInputs);
+    document.getElementById('debt-draft-items-body')?.addEventListener('click',e=>{
+      const del=e.target.closest('[data-debt-draft-delete]');
+      if(del) deleteDebtDraftItem(Number(del.dataset.debtDraftDelete));
+    });
+    document.getElementById('debt-inv-save-btn')?.addEventListener('click',saveAdvancedDebtInvoice);
+    document.getElementById('debt-inv-cancel-edit-btn')?.addEventListener('click',resetDebtInvoiceBuilder);
     document.getElementById('debts-body')?.addEventListener('click',e=>{
       const pay=e.target.closest('[data-debt-pay]');
       const pr=e.target.closest('[data-debt-print]');
       const del=e.target.closest('[data-debt-delete]');
+      const edit=e.target.closest('[data-debt-edit]');
+      const prAdv=e.target.closest('[data-debt-print-advanced]');
       if(pay) payDebt(Number(pay.dataset.debtPay));
       if(pr) printDebtInvoice(Number(pr.dataset.debtPrint));
+      if(prAdv) printAdvancedDebtInvoice(Number(prAdv.dataset.debtPrintAdvanced));
+      if(edit) editDebt(Number(edit.dataset.debtEdit));
       if(del) deleteDebt(Number(del.dataset.debtDelete));
     });
     const d=document.getElementById('debt-date'); if(d && !d.value) d.value=todayValue();
     const t=document.getElementById('debt-time'); if(t && !t.value) t.value=timeValue();
+    clearDebtItemInputs();
+    normalizeAllDebts();
+    renderDebtDraftItems();
+    document.getElementById('enable-daily-sales-notification-btn')?.addEventListener('click',enableDailySalesNotifications);
+    document.getElementById('test-daily-sales-notification-btn')?.addEventListener('click',()=>browserNotifyDailySales(todayValue(),true));
+    if(localStorage.getItem(DAILY_SALES_NOTIF_ENABLED_KEY)==='1'){
+      updateDailySalesNotificationStatus('✅ إشعار تقرير المبيعات اليومي مفعّل الساعة 10:00 مساءً.');
+      scheduleDailySalesNotification();
+      checkMissedDailySalesNotification();
+    }else{
+      updateDailySalesNotificationStatus('الإشعار غير مفعّل بعد. اضغط زر التفعيل لمنح المتصفح الإذن.');
+    }
     renderDebts(); checkNotifications();
     initDebtSync();
     // يعيد تحديث التنبيهات بعد كل تحديث مرئي للبرنامج القديم.
@@ -3681,6 +4051,8 @@ initFirebaseSync();
   window.payDebt=payDebt;
   window.printDebtInvoice=printDebtInvoice;
   window.deleteDebt=deleteDebt;
+  window.editDebt=editDebt;
+  window.printAdvancedDebtInvoice=printAdvancedDebtInvoice;
   window.renderDebts=renderDebts;
   window.checkNotifications=checkNotifications;
 })();
