@@ -965,6 +965,7 @@
       <div class="tabs">
         <button class="tab-btn active" data-tab="rep-daily">تقرير يومي</button>
         <button class="tab-btn" data-tab="rep-monthly">تقرير شهري</button>
+        <button class="tab-btn" data-tab="rep-income">💰 الدخل اليومي</button>
       </div>
       <div class="tab-panel active" id="rep-daily">
         <div class="field" style="max-width:220px;">
@@ -978,6 +979,84 @@
           <input type="month" id="rep-month-input">
         </div>
       </div>
+
+      <div class="tab-panel" id="rep-income">
+        <div class="card" style="margin:0 0 14px 0;">
+          <h3>💰 إدخال التحصيل اليومي</h3>
+          <div class="grid grid-3">
+            <div class="field">
+              <label>تاريخ التحصيل *</label>
+              <input type="date" id="income-date-input">
+            </div>
+            <div class="field">
+              <label>مبلغ التحصيل (د.ع) *</label>
+              <input type="number" id="income-amount-input" min="0" step="1" placeholder="0">
+            </div>
+            <div class="field">
+              <label>ملاحظات (اختياري)</label>
+              <input type="text" id="income-note-input" placeholder="مثال: تحصيل نقدي اليوم">
+            </div>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="btn good" id="income-save-btn">💾 حفظ التحصيل</button>
+            <button type="button" class="btn secondary" id="income-clear-btn">تفريغ الحقول</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>📊 حساب الدخل</h3>
+          <div class="grid grid-3" style="align-items:end;">
+            <div class="field">
+              <label>نوع الحساب</label>
+              <select id="income-period-select">
+                <option value="daily">يومي</option>
+                <option value="weekly">أسبوعي</option>
+                <option value="monthly">شهري</option>
+                <option value="yearly">سنوي</option>
+                <option value="range">من شهر إلى شهر</option>
+              </select>
+            </div>
+            <div class="field" id="income-period-date-wrap">
+              <label id="income-period-date-label">اختر اليوم</label>
+              <input type="date" id="income-period-date">
+            </div>
+            <div class="field" id="income-period-month-wrap" style="display:none;">
+              <label>اختر الشهر</label>
+              <input type="month" id="income-period-month">
+            </div>
+            <div class="field" id="income-period-year-wrap" style="display:none;">
+              <label>اختر السنة</label>
+              <input type="number" id="income-period-year" min="2000" max="2100" step="1">
+            </div>
+            <div class="field" id="income-range-from-wrap" style="display:none;">
+              <label>من شهر</label>
+              <input type="month" id="income-range-from">
+            </div>
+            <div class="field" id="income-range-to-wrap" style="display:none;">
+              <label>إلى شهر</label>
+              <input type="month" id="income-range-to">
+            </div>
+            <div class="field">
+              <button type="button" class="btn" id="income-calc-btn">📊 حساب الدخل</button>
+            </div>
+          </div>
+          <div id="income-period-result" style="margin-top:14px;"></div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+            <h3 style="margin:0;">📋 سجل التحصيل اليومي</h3>
+            <button type="button" class="btn print-list-btn no-print" id="income-print-btn">🖨️ طباعة سجل الدخل</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>التاريخ</th><th>المبلغ</th><th>الملاحظات</th><th>بواسطة</th><th></th></tr></thead>
+              <tbody id="income-history-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <div class="btn-row">
         <button type="button" class="btn print-list-btn no-print" id="rep-print-btn">🖨️ طباعة التقرير الحالي</button>
       </div>
@@ -1070,7 +1149,7 @@ var zbarWasm=function(A){"use strict";function I(A,I,g,B){return new(g||(g=Promi
    تخزين البيانات محلياً في المتصفح (localStorage)
    ========================================================================= */
 
-const STORE_KEYS = { products:'halawi_products', invoices:'halawi_invoices', returns:'halawi_returns', counter:'halawi_counter', purchases:'halawi_purchases' };
+const STORE_KEYS = { products:'halawi_products', invoices:'halawi_invoices', returns:'halawi_returns', counter:'halawi_counter', purchases:'halawi_purchases', dailyIncome:'halawi_daily_income' };
 
 /* =========================================================================
    USERS / LOGIN
@@ -1178,11 +1257,13 @@ function initFirebaseSync(){
       INVOICES = val.invoices || [];
       RETURNS = val.returns || [];
       PURCHASES = val.purchases || [];
+      DAILY_INCOME = Array.isArray(val.dailyIncome) ? val.dailyIncome : (val.dailyIncome && typeof val.dailyIncome === 'object' ? Object.values(val.dailyIncome) : []);
       if(val.counter) COUNTER = val.counter;
       saveData(STORE_KEYS.products, PRODUCTS);
       saveData(STORE_KEYS.invoices, INVOICES);
       saveData(STORE_KEYS.returns, RETURNS);
       saveData(STORE_KEYS.purchases, PURCHASES);
+      saveData(STORE_KEYS.dailyIncome, DAILY_INCOME);
       saveData(STORE_KEYS.counter, COUNTER);
       applyingRemoteUpdate = false;
       if(typeof refreshAllViews === 'function') refreshAllViews();
@@ -1200,8 +1281,8 @@ function syncToFirebase(){
   setSyncIndicator('syncing','جارٍ الحفظ في المزامنة...');
   clearTimeout(fbSyncTimer);
   fbSyncTimer = setTimeout(()=>{
-    fbDbRef.set({
-      products: PRODUCTS, invoices: INVOICES, returns: RETURNS, purchases: PURCHASES, counter: COUNTER,
+    fbDbRef.update({
+      products: PRODUCTS, invoices: INVOICES, returns: RETURNS, purchases: PURCHASES, dailyIncome: DAILY_INCOME, counter: COUNTER,
       updatedAt: Date.now(), updatedBy: currentUser || null
     }).then(()=> setSyncIndicator('online','متصل - تمت المزامنة'))
       .catch(e=>{ console.error('Firebase set error', e); setSyncIndicator('offline','تعذّر حفظ المزامنة'); });
@@ -1231,6 +1312,7 @@ let PRODUCTS = loadData(STORE_KEYS.products, []);
 let INVOICES = loadData(STORE_KEYS.invoices, []);
 let RETURNS  = loadData(STORE_KEYS.returns, []);
 let PURCHASES = loadData(STORE_KEYS.purchases, []);
+let DAILY_INCOME = loadData(STORE_KEYS.dailyIncome, []);
 let COUNTER  = loadData(STORE_KEYS.counter, { invoice: 1000 });
 if(!COUNTER.purchase) COUNTER.purchase = 1000;
 
@@ -1239,6 +1321,7 @@ function persistAll(){
   saveData(STORE_KEYS.invoices, INVOICES);
   saveData(STORE_KEYS.returns, RETURNS);
   saveData(STORE_KEYS.purchases, PURCHASES);
+  saveData(STORE_KEYS.dailyIncome, DAILY_INCOME);
   saveData(STORE_KEYS.counter, COUNTER);
   syncToFirebase();
 }
@@ -1484,6 +1567,8 @@ arcForm.addEventListener('submit', (e)=>{
   renderStock();
   if(typeof refreshPurchaseDatalist==='function') refreshPurchaseDatalist();
   if(typeof refreshMiscDatalist==='function') refreshMiscDatalist();
+  if(typeof renderIncomeHistory==='function') renderIncomeHistory();
+  if(typeof calculateIncomePeriod==='function') calculateIncomePeriod();
 });
 
 document.getElementById('arc-clear-btn').addEventListener('click', ()=>{ arcForm.reset(); arcCategory.value='قرطاسية'; arcHint.textContent=''; });
@@ -2439,6 +2524,7 @@ document.getElementById('rep-day-input').addEventListener('change', renderDailyR
 document.getElementById('rep-month-input').addEventListener('change', renderMonthlyReport);
 document.querySelector('#sec-reports .tab-btn[data-tab="rep-daily"]').addEventListener('click', renderDailyReport);
 document.querySelector('#sec-reports .tab-btn[data-tab="rep-monthly"]').addEventListener('click', renderMonthlyReport);
+document.querySelector('#sec-reports .tab-btn[data-tab="rep-income"]')?.addEventListener('click', ()=>{ renderIncomeHistory(); calculateIncomePeriod(); });
 
 function invoiceItemCategory(it){
   if(it.category) return it.category;
@@ -2666,8 +2752,11 @@ function renderDailyReport(){
   }));
   const topProducts = Object.entries(prodMap).sort((a,b)=>b[1].revenue-a[1].revenue).slice(0,8);
 
+  const dailyIncomeTotal = getIncomeTotalForDates([day]);
+
   document.getElementById('rep-output').innerHTML = `
     <div class="card"><h3>📤 ملخص مبيعات يوم ${day}</h3>${renderStatTiles(stats)}</div>
+    ${renderIncomeSummaryCard(dailyIncomeTotal, `دخل/تحصيل يوم ${displayDateFromStr(day)}`)}
     ${renderCategoryStats(stats)}
     <div class="card"><h3>الأكثر مبيعاً هذا اليوم</h3>
       ${topProducts.length? `<div style="position:relative;"><canvas id="rep-day-chart"></canvas></div>` : '<p class="hint">لا توجد مبيعات في هذا اليوم بعد.</p>'}
@@ -2700,8 +2789,11 @@ function renderMonthlyReport(){
   });
   const labels = dailyRevenue.map((_,i)=>String(i+1));
 
+  const monthlyIncomeTotal = getIncomeTotalForMonth(month);
+
   document.getElementById('rep-output').innerHTML = `
     <div class="card"><h3>📤 ملخص مبيعات شهر ${month}</h3>${renderStatTiles(stats)}</div>
+    ${renderIncomeSummaryCard(monthlyIncomeTotal, `دخل/تحصيل شهر ${month}`)}
     ${renderCategoryStats(stats)}
     <div class="card"><h3>المبيعات اليومية خلال الشهر</h3>
       ${invoices.length? `<div style="position:relative;"><canvas id="rep-month-chart"></canvas></div>` : '<p class="hint">لا توجد مبيعات في هذا الشهر بعد.</p>'}
@@ -2717,15 +2809,219 @@ function renderMonthlyReport(){
   }
 }
 
+
+/* =========================================================================
+   DAILY INCOME / COLLECTION
+   إدخال التحصيل اليومي وحسابه يومياً/أسبوعياً/شهرياً/سنوياً/حسب فترة أشهر.
+   يتم حفظه محلياً ومزامنته مع Firebase ضمن halawi_store.dailyIncome.
+   ========================================================================= */
+function normalizeIncomeRecord(item){
+  return {
+    id: item && item.id ? String(item.id) : uid(),
+    date: String((item && item.date) || todayStr()),
+    amount: Number((item && item.amount) || 0),
+    note: String((item && item.note) || ''),
+    addedBy: String((item && item.addedBy) || ''),
+    createdAt: (item && item.createdAt) || new Date().toISOString(),
+    updatedAt: (item && item.updatedAt) || null
+  };
+}
+DAILY_INCOME = (Array.isArray(DAILY_INCOME) ? DAILY_INCOME : []).map(normalizeIncomeRecord);
+
+function getIncomeTotalForDates(dates){
+  const set = new Set((dates || []).map(String));
+  return DAILY_INCOME.reduce((sum, item)=> set.has(String(item.date)) ? sum + Number(item.amount || 0) : sum, 0);
+}
+function getIncomeTotalForMonth(month){
+  return DAILY_INCOME.reduce((sum,item)=> String(item.date || '').startsWith(String(month)) ? sum + Number(item.amount || 0) : sum, 0);
+}
+function dateToLocalDate(dateStr){
+  return new Date(String(dateStr) + 'T00:00:00');
+}
+function formatIncomePeriodLabel(mode, start, end){
+  if(mode==='daily') return `اليوم ${displayDateFromStr(start)}`;
+  if(mode==='weekly') return `الأسبوع من ${displayDateFromStr(start)} إلى ${displayDateFromStr(end)}`;
+  if(mode==='monthly') return `الشهر ${start}`;
+  if(mode==='yearly') return `السنة ${start}`;
+  return `من شهر ${start} إلى شهر ${end}`;
+}
+function getDatesBetween(startStr,endStr){
+  const dates=[];
+  let d=dateToLocalDate(startStr), end=dateToLocalDate(endStr);
+  if(isNaN(d)||isNaN(end)||d>end) return dates;
+  while(d<=end){
+    dates.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
+    d.setDate(d.getDate()+1);
+  }
+  return dates;
+}
+function getMonthRangeDates(fromMonth,toMonth){
+  const from=String(fromMonth||''), to=String(toMonth||'');
+  if(!/^\d{4}-\d{2}$/.test(from)||!/^\d{4}-\d{2}$/.test(to)||from>to) return [];
+  const [fy,fm]=from.split('-').map(Number), [ty,tm]=to.split('-').map(Number);
+  const dates=[];
+  let y=fy,m=fm;
+  while(y<ty || (y===ty && m<=tm)){
+    const days=new Date(y,m,0).getDate();
+    for(let day=1;day<=days;day++) dates.push(y+'-'+String(m).padStart(2,'0')+'-'+String(day).padStart(2,'0'));
+    m++; if(m>12){m=1;y++;}
+  }
+  return dates;
+}
+function renderIncomeSummaryCard(total,label){
+  return `<div class="card" style="border-top:3px solid var(--good);margin-top:12px;">\n    <h3>💰 ${escapeHtml(label)}</h3>\n    <div class="grid grid-2">\n      <div class="stat-tile"><div class="v">${fmtMoney(total)}</div><div class="l">إجمالي الدخل/التحصيل (د.ع)</div></div>\n      <div class="stat-tile"><div class="v">${fmtMoney(total)}</div><div class="l">المبلغ المحصل فعلياً (د.ع)</div></div>\n    </div>\n  </div>`;
+}
+function renderIncomeHistory(){
+  const tbody=document.getElementById('income-history-body');
+  if(!tbody) return;
+  const list=[...DAILY_INCOME].sort((a,b)=> new Date(b.date+'T00:00:00')-new Date(a.date+'T00:00:00') || new Date(b.createdAt)-new Date(a.createdAt));
+  if(!list.length){ tbody.innerHTML='<tr class="empty-row"><td colspan="5">لا يوجد تحصيل يومي مسجل بعد.</td></tr>'; return; }
+  tbody.innerHTML=list.slice(0,500).map(item=>`<tr>
+    <td>${escapeHtml(item.date)}</td>
+    <td><b>${fmtMoney(item.amount)}</b> د.ع</td>
+    <td>${escapeHtml(item.note)||'-'}</td>
+    <td>${item.addedBy?addedByBadge(item.addedBy):'-'}</td>
+    <td><button type="button" class="btn sm danger" data-income-delete="${escapeHtml(item.id)}">🗑️ حذف</button></td>
+  </tr>`).join('');
+}
+function saveDailyIncome(){
+  const dateEl=document.getElementById('income-date-input');
+  const amountEl=document.getElementById('income-amount-input');
+  const noteEl=document.getElementById('income-note-input');
+  const date=dateEl?.value || todayStr();
+  const amount=Number(amountEl?.value || 0);
+  const note=(noteEl?.value || '').trim();
+  if(!date || amount<0){ alert('يرجى إدخال التاريخ ومبلغ التحصيل بصورة صحيحة.'); return; }
+  const existing=DAILY_INCOME.find(x=>String(x.date)===String(date));
+  if(existing){
+    const choice=confirm(`يوجد تحصيل مسجل بتاريخ ${date} بقيمة ${fmtMoney(existing.amount)} د.ع.\n\nاضغط موافق لإضافة المبلغ الجديد إلى تحصيل اليوم.\nاضغط إلغاء لإنشاء سجل مستقل.`);
+    if(choice){
+      existing.amount=Number(existing.amount||0)+amount;
+      if(note) existing.note=existing.note ? existing.note+' | '+note : note;
+      existing.updatedAt=new Date().toISOString();
+      existing.addedBy=currentUser || existing.addedBy || '';
+    }else{
+      DAILY_INCOME.push(normalizeIncomeRecord({date,amount,note,addedBy:currentUser||''}));
+    }
+  }else{
+    DAILY_INCOME.push(normalizeIncomeRecord({date,amount,note,addedBy:currentUser||''}));
+  }
+  saveData(STORE_KEYS.dailyIncome,DAILY_INCOME);
+  syncToFirebase();
+  renderIncomeHistory();
+  calculateIncomePeriod();
+  renderDailyReport();
+  renderMonthlyReport();
+  if(amountEl) amountEl.value='';
+  if(noteEl) noteEl.value='';
+  showToast('تم حفظ التحصيل اليومي بنجاح','good');
+}
+function deleteDailyIncome(id){
+  const index=DAILY_INCOME.findIndex(x=>String(x.id)===String(id));
+  if(index<0) return;
+  const item=DAILY_INCOME[index];
+  if(!confirm(`هل تريد حذف تحصيل ${fmtMoney(item.amount)} د.ع بتاريخ ${item.date}؟`)) return;
+  DAILY_INCOME.splice(index,1);
+  saveData(STORE_KEYS.dailyIncome,DAILY_INCOME);
+  syncToFirebase();
+  renderIncomeHistory(); calculateIncomePeriod(); renderDailyReport(); renderMonthlyReport();
+  showToast('تم حذف سجل التحصيل','good');
+}
+function calculateIncomePeriod(){
+  const mode=document.getElementById('income-period-select')?.value || 'daily';
+  const result=document.getElementById('income-period-result');
+  if(!result) return;
+  const dateWrap=document.getElementById('income-period-date-wrap');
+  const monthWrap=document.getElementById('income-period-month-wrap');
+  const yearWrap=document.getElementById('income-period-year-wrap');
+  const fromWrap=document.getElementById('income-range-from-wrap');
+  const toWrap=document.getElementById('income-range-to-wrap');
+  const dateLabel=document.getElementById('income-period-date-label');
+  [dateWrap,monthWrap,yearWrap,fromWrap,toWrap].forEach(x=>{if(x)x.style.display='none';});
+  let total=0, label='';
+  if(mode==='daily'){
+    dateWrap.style.display='block'; dateLabel.textContent='اختر اليوم';
+    const day=document.getElementById('income-period-date').value || todayStr();
+    document.getElementById('income-period-date').value=day;
+    total=getIncomeTotalForDates([day]); label=formatIncomePeriodLabel('daily',day,day);
+  }else if(mode==='weekly'){
+    dateWrap.style.display='block'; dateLabel.textContent='اختر أي يوم من الأسبوع';
+    const selected=document.getElementById('income-period-date').value || todayStr();
+    document.getElementById('income-period-date').value=selected;
+    const d=dateToLocalDate(selected); const day=d.getDay(); const diff=day===0?-6:1-day;
+    const start=new Date(d); start.setDate(d.getDate()+diff);
+    const end=new Date(start); end.setDate(start.getDate()+6);
+    const ds=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');
+    const startStr=ds(start), endStr=ds(end);
+    total=getIncomeTotalForDates(getDatesBetween(startStr,endStr)); label=formatIncomePeriodLabel('weekly',startStr,endStr);
+  }else if(mode==='monthly'){
+    monthWrap.style.display='block';
+    const month=document.getElementById('income-period-month').value || todayStr().slice(0,7);
+    document.getElementById('income-period-month').value=month;
+    total=getIncomeTotalForMonth(month); label=formatIncomePeriodLabel('monthly',month,month);
+  }else if(mode==='yearly'){
+    yearWrap.style.display='block';
+    const year=document.getElementById('income-period-year').value || String(new Date().getFullYear());
+    document.getElementById('income-period-year').value=year;
+    total=DAILY_INCOME.reduce((sum,item)=>String(item.date||'').startsWith(String(year)+'-')?sum+Number(item.amount||0):sum,0);
+    label=formatIncomePeriodLabel('yearly',year,year);
+  }else{
+    fromWrap.style.display='block'; toWrap.style.display='block';
+    const from=document.getElementById('income-range-from').value || todayStr().slice(0,7);
+    const to=document.getElementById('income-range-to').value || from;
+    document.getElementById('income-range-from').value=from; document.getElementById('income-range-to').value=to;
+    if(from>to){ result.innerHTML='<p class="hint" style="color:var(--critical);">⚠️ يجب أن يكون شهر «من» قبل أو مساوياً لشهر «إلى».</p>'; return; }
+    total=getIncomeTotalForDates(getMonthRangeDates(from,to)); label=formatIncomePeriodLabel('range',from,to);
+  }
+  const records=DAILY_INCOME.filter(item=>{
+    if(mode==='daily') return item.date===(document.getElementById('income-period-date').value || todayStr());
+    if(mode==='weekly') return false;
+    if(mode==='monthly') return String(item.date||'').startsWith(document.getElementById('income-period-month').value);
+    if(mode==='yearly') return String(item.date||'').startsWith(String(document.getElementById('income-period-year').value)+'-');
+    const f=document.getElementById('income-range-from').value, t=document.getElementById('income-range-to').value;
+    return item.date>=f+'-01' && item.date<=t+'-31';
+  });
+  result.innerHTML=`<div class="grid grid-2">
+    <div class="stat-tile"><div class="v">${fmtMoney(total)}</div><div class="l">${escapeHtml(label)}</div></div>
+    <div class="stat-tile"><div class="v">${mode==='weekly'?'7':records.length}</div><div class="l">${mode==='weekly'?'عدد أيام الفترة':'عدد سجلات التحصيل'}</div></div>
+  </div>`;
+}
+function initDailyIncomeUI(){
+  const today=todayStr();
+  const ids={
+    'income-date-input':today,
+    'income-period-date':today,
+    'income-period-month':today.slice(0,7),
+    'income-period-year':String(new Date().getFullYear()),
+    'income-range-from':today.slice(0,7),
+    'income-range-to':today.slice(0,7)
+  };
+  Object.entries(ids).forEach(([id,val])=>{const el=document.getElementById(id); if(el&&!el.value) el.value=val;});
+  document.getElementById('income-save-btn')?.addEventListener('click',saveDailyIncome);
+  document.getElementById('income-clear-btn')?.addEventListener('click',()=>{document.getElementById('income-amount-input').value='';document.getElementById('income-note-input').value='';});
+  document.getElementById('income-calc-btn')?.addEventListener('click',calculateIncomePeriod);
+  document.getElementById('income-period-select')?.addEventListener('change',calculateIncomePeriod);
+  ['income-period-date','income-period-month','income-period-year','income-range-from','income-range-to'].forEach(id=>document.getElementById(id)?.addEventListener('change',calculateIncomePeriod));
+  document.getElementById('income-history-body')?.addEventListener('click',e=>{const b=e.target.closest('[data-income-delete]'); if(b) deleteDailyIncome(b.dataset.incomeDelete);});
+  document.getElementById('income-print-btn')?.addEventListener('click',()=>{
+    const rows=[...DAILY_INCOME].sort((a,b)=>b.date.localeCompare(a.date)).map(x=>[x.date,fmtMoney(x.amount)+' د.ع',x.note||'-',x.addedBy||'-']);
+    printListA4({title:'سجل الدخل / التحصيل اليومي',subtitle:'جميع سجلات التحصيل المحفوظة',headers:['التاريخ','المبلغ','الملاحظات','بواسطة'],rows,stats:[{v:fmtMoney(DAILY_INCOME.reduce((s,x)=>s+Number(x.amount||0),0)),l:'إجمالي الدخل/التحصيل'}]});
+  });
+  renderIncomeHistory(); calculateIncomePeriod();
+}
+
 /* Print whichever report (daily/monthly) is currently displayed, charts included */
 document.getElementById('rep-print-btn').addEventListener('click', ()=>{
   const output = document.getElementById('rep-output');
   if(!output || !output.innerHTML.trim()){ showToast('لا يوجد تقرير لعرضه للطباعة','err'); return; }
 
   const monthlyActive = document.querySelector('#sec-reports .tab-btn[data-tab="rep-monthly"]').classList.contains('active');
-  const periodLabel = monthlyActive
-    ? ('تقرير شهر ' + (document.getElementById('rep-month-input').value || ''))
-    : ('تقرير يوم ' + displayDateFromStr(document.getElementById('rep-day-input').value || todayStr()));
+  const incomeActive = document.querySelector('#sec-reports .tab-btn[data-tab="rep-income"]')?.classList.contains('active');
+  const periodLabel = incomeActive
+    ? 'سجل الدخل / التحصيل اليومي'
+    : monthlyActive
+      ? ('تقرير شهر ' + (document.getElementById('rep-month-input').value || ''))
+      : ('تقرير يوم ' + displayDateFromStr(document.getElementById('rep-day-input').value || todayStr()));
 
   // Clone the report and swap live <canvas> charts for static images,
   // since cloning a canvas node does not carry over its drawn pixels.
@@ -3054,6 +3350,7 @@ document.getElementById('bk-export-btn').addEventListener('click', ()=>{
     invoices: INVOICES,
     returns: RETURNS,
     purchases: PURCHASES,
+    dailyIncome: DAILY_INCOME,
     counter: COUNTER
   };
   const json = JSON.stringify(backup, null, 2);
@@ -3098,7 +3395,7 @@ document.getElementById('bk-import-file').addEventListener('change', (e)=>{
     const exportedAt = data.meta && data.meta.exportedAt ? new Date(data.meta.exportedAt).toLocaleString('ar-IQ') : 'غير معروف';
     preview.innerHTML = `
       <div class="selected-preview show">
-        <p>📄 محتوى الملف: <b>${data.products.length}</b> مادة، <b>${data.invoices.length}</b> فاتورة، <b>${(data.returns||[]).length}</b> استرجاع، <b>${(data.purchases||[]).length}</b> فاتورة شراء.<br>
+        <p>📄 محتوى الملف: <b>${data.products.length}</b> مادة، <b>${data.invoices.length}</b> فاتورة، <b>${(data.returns||[]).length}</b> استرجاع، <b>${(data.purchases||[]).length}</b> فاتورة شراء، <b>${(data.dailyIncome||[]).length}</b> سجل دخل.<br>
         تاريخ إنشاء النسخة: <b>${exportedAt}</b></p>
         <p style="color:var(--critical);"><b>⚠️ تنبيه: استيراد هذا الملف سيستبدل جميع البيانات الحالية في هذا الجهاز (${PRODUCTS.length} مادة، ${INVOICES.length} فاتورة) بالكامل ولا يمكن التراجع عنه إلا بنسخة احتياطية أخرى.</b></p>
         <div class="btn-row">
@@ -3121,6 +3418,7 @@ function doImport(){
   INVOICES = pendingImportData.invoices || [];
   RETURNS = pendingImportData.returns || [];
   PURCHASES = pendingImportData.purchases || [];
+  DAILY_INCOME = Array.isArray(pendingImportData.dailyIncome) ? pendingImportData.dailyIncome.map(normalizeIncomeRecord) : [];
   COUNTER = pendingImportData.counter || { invoice: 1000 };
   if(!COUNTER.purchase) COUNTER.purchase = 1000;
   persistAll();
@@ -3149,6 +3447,7 @@ function refreshAllViews(){
   if(monthlyTab && monthlyTab.classList.contains('active')) renderMonthlyReport();
   renderBackupSummary();
 }
+if(typeof initDailyIncomeUI==='function') initDailyIncomeUI();
 refreshAllViews();
 
 /* تسجيل الدخول: إظهار واجهة الدخول إن لم يكن هناك مستخدم مسجل حالياً */
@@ -3386,234 +3685,6 @@ initFirebaseSync();
   window.checkNotifications=checkNotifications;
 })();
 </script>
-<!-- ===== نظام التحديث التلقائي ===== -->
-<script>
-(function () {
-  'use strict';
 
-  const HALAWI_APP_VERSION = '1.0.0';
-
-  const HALAWI_VERSION_URL =
-    'https://haideralhillawi-sudo.github.io/halawi-app/version.json';
-
-  const HALAWI_UPDATE_URL =
-    'https://haideralhillawi-sudo.github.io/halawi-app/';
-
-  function compareVersions(a, b) {
-    const av = String(a || '0').split('.').map(Number);
-    const bv = String(b || '0').split('.').map(Number);
-
-    for (let i = 0; i < 3; i++) {
-      const x = av[i] || 0;
-      const y = bv[i] || 0;
-
-      if (x > y) return 1;
-      if (x < y) return -1;
-    }
-
-    return 0;
-  }
-
-  function createUpdateStyle() {
-    if (document.getElementById('halawi-update-style')) return;
-
-    const style = document.createElement('style');
-    style.id = 'halawi-update-style';
-
-    style.textContent = `
-      #halawi-update-overlay{
-        position:fixed;
-        inset:0;
-        background:rgba(0,0,0,.58);
-        z-index:999999;
-        display:none;
-        align-items:center;
-        justify-content:center;
-        padding:20px;
-        direction:rtl;
-        font-family:Tahoma,"Segoe UI",Arial,sans-serif;
-      }
-
-      #halawi-update-overlay.show{
-        display:flex;
-      }
-
-      .halawi-update-card{
-        width:min(430px,95vw);
-        background:#fff;
-        border-radius:16px;
-        padding:25px;
-        box-shadow:0 15px 50px rgba(0,0,0,.3);
-        text-align:center;
-      }
-
-      .halawi-update-icon{
-        font-size:48px;
-        margin-bottom:8px;
-      }
-
-      .halawi-update-card h2{
-        margin:0 0 10px;
-        color:#184f95;
-        font-size:21px;
-      }
-
-      .halawi-update-card p{
-        margin:8px 0;
-        color:#52514e;
-        line-height:1.8;
-        font-size:13.5px;
-      }
-
-      .halawi-update-version{
-        background:#eef4fc;
-        border-radius:10px;
-        padding:10px;
-        margin:15px 0;
-        color:#184f95;
-        font-weight:bold;
-      }
-
-      .halawi-update-buttons{
-        display:flex;
-        gap:10px;
-        margin-top:15px;
-      }
-
-      .halawi-update-buttons button{
-        flex:1;
-        border:none;
-        border-radius:8px;
-        padding:11px;
-        cursor:pointer;
-        font-family:inherit;
-        font-weight:bold;
-        font-size:14px;
-      }
-
-      .halawi-update-now{
-        background:#0ca30c;
-        color:#fff;
-      }
-
-      .halawi-update-later{
-        background:#fff;
-        color:#184f95;
-        border:1px solid #2a78d6 !important;
-      }
-    `;
-
-    document.head.appendChild(style);
-  }
-
-  function createUpdateWindow(info) {
-    createUpdateStyle();
-
-    if (document.getElementById('halawi-update-overlay')) return;
-
-    const overlay = document.createElement('div');
-    overlay.id = 'halawi-update-overlay';
-
-    const card = document.createElement('div');
-    card.className = 'halawi-update-card';
-
-    const message =
-      info.message ||
-      'يتوفر إصدار جديد من برنامج مكتبة الحلاوي.';
-
-    card.innerHTML = `
-      <div class="halawi-update-icon">🚀</div>
-
-      <h2>يتوفر تحديث جديد</h2>
-
-      <p>${message}</p>
-
-      <div class="halawi-update-version">
-        الإصدار الحالي:
-        ${HALAWI_APP_VERSION}
-        <br>
-        الإصدار الجديد:
-        ${info.version}
-      </div>
-
-      <div class="halawi-update-buttons">
-        <button class="halawi-update-now">
-          تحديث الآن
-        </button>
-
-        <button class="halawi-update-later">
-          لاحقًا
-        </button>
-      </div>
-    `;
-
-    overlay.appendChild(card);
-    document.body.appendChild(overlay);
-
-    overlay.classList.add('show');
-
-    card.querySelector('.halawi-update-now')
-      .addEventListener('click', function () {
-        const target =
-          info.updateUrl ||
-          HALAWI_UPDATE_URL;
-
-        window.location.href =
-          target +
-          (target.includes('?') ? '&' : '?') +
-          'update=' +
-          Date.now();
-      });
-
-    card.querySelector('.halawi-update-later')
-      .addEventListener('click', function () {
-        overlay.classList.remove('show');
-      });
-  }
-
-  async function checkForHalawiUpdate() {
-    try {
-      const response = await fetch(
-        HALAWI_VERSION_URL +
-        '?t=' +
-        Date.now(),
-        {
-          cache: 'no-store'
-        }
-      );
-
-      if (!response.ok) return;
-
-      const info = await response.json();
-
-      if (!info || !info.version) return;
-
-      if (compareVersions(
-        info.version,
-        HALAWI_APP_VERSION
-      ) > 0) {
-        createUpdateWindow(info);
-      }
-
-    } catch (error) {
-      console.log(
-        'تعذر التحقق من وجود تحديث:',
-        error
-      );
-    }
-  }
-
-  window.addEventListener(
-    'load',
-    function () {
-      setTimeout(
-        checkForHalawiUpdate,
-        1500
-      );
-    }
-  );
-
-})();
-</script>
 </body>
 </html>
