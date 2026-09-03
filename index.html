@@ -824,6 +824,36 @@
           <tbody id="invlist-detail-body"></tbody>
         </table>
       </div>
+
+      <!-- ===== إضافة مادة إلى الفاتورة أثناء التعديل ===== -->
+      <div id="invlist-add-item-box" class="card" style="display:none;margin:14px 0 0 0;background:var(--brand-bg);border:1px dashed var(--brand);">
+        <h3 style="margin-bottom:10px;">➕ إضافة مادة إلى هذه الفاتورة</h3>
+        <p class="hint" style="margin-bottom:10px;">
+          اختر مادة من الأرشيف أو اكتب اسم مادة أخرى. عند الحفظ ستُحسب المادة ضمن إجمالي الفاتورة الكلي،
+          وإذا كانت مرتبطة بمادة في المخزون فسيتم خصم كميتها من المخزون.
+        </p>
+        <div class="grid grid-4" style="align-items:end;">
+          <div class="field" style="grid-column:span 2;">
+            <label>اسم المادة أو الباركود *</label>
+            <input type="text" id="invlist-add-search" placeholder="ابحث باسم المادة أو الباركود" autocomplete="off" list="invlist-add-datalist">
+            <datalist id="invlist-add-datalist"></datalist>
+          </div>
+          <div class="field">
+            <label>الكمية *</label>
+            <input type="number" id="invlist-add-qty" min="1" step="1" value="1">
+          </div>
+          <div class="field">
+            <label>سعر الوحدة *</label>
+            <input type="number" id="invlist-add-price" min="0" step="1" placeholder="0">
+          </div>
+        </div>
+        <div id="invlist-add-preview" class="selected-preview"></div>
+        <div class="btn-row">
+          <button type="button" class="btn" id="invlist-add-item-btn">➕ إضافة إلى الفاتورة</button>
+          <button type="button" class="btn secondary" id="invlist-add-clear-btn">تفريغ</button>
+        </div>
+      </div>
+
       <div style="text-align:left;margin-top:14px;font-size:19px;">
         <b>إجمالي الفاتورة: <span id="invlist-detail-total" style="color:var(--brand-dark);">0</span> د.ع</b>
       </div>
@@ -2221,7 +2251,61 @@ document.getElementById('stk-category-filter').addEventListener('change', render
    ========================================================================= */
 let invListExpandedId = null;
 let invListEditMode = false;
+let invListPendingAddedItems = [];
+let invListAddSelectedProductId = null;
 const INVOICE_LIST_PASSWORD = '632759';
+
+function refreshInvoiceListAddDatalist(){
+  const dl = document.getElementById('invlist-add-datalist');
+  if(!dl) return;
+  const names = [];
+  PRODUCTS.forEach(p=>{
+    if(p.name) names.push(p.name);
+    if(p.barcode) names.push(p.barcode);
+  });
+  dl.innerHTML = [...new Set(names)].map(v=>`<option value="${escapeHtml(v)}"></option>`).join('');
+}
+
+function clearInvoiceListAddFields(){
+  const search = document.getElementById('invlist-add-search');
+  const qty = document.getElementById('invlist-add-qty');
+  const price = document.getElementById('invlist-add-price');
+  const preview = document.getElementById('invlist-add-preview');
+  if(search) search.value='';
+  if(qty) qty.value=1;
+  if(price) price.value='';
+  if(preview){
+    preview.innerHTML='';
+    preview.classList.remove('show');
+  }
+  invListAddSelectedProductId = null;
+}
+
+function selectInvoiceListAddProduct(p){
+  invListAddSelectedProductId = p ? p.id : null;
+  const price = document.getElementById('invlist-add-price');
+  const preview = document.getElementById('invlist-add-preview');
+  if(p){
+    if(price) price.value = Number(p.sellPrice)||0;
+    if(preview){
+      preview.innerHTML = `<b>${escapeHtml(p.name)}</b> — المتوفر حالياً: <b>${fmtMoney(p.qty)}</b> — سعر البيع: <b>${fmtMoney(p.sellPrice)}</b> د.ع`;
+      preview.classList.add('show');
+    }
+  }else if(preview){
+    preview.innerHTML='';
+    preview.classList.remove('show');
+  }
+}
+
+function resolveInvoiceListAddProduct(){
+  const value = (document.getElementById('invlist-add-search')?.value||'').trim().toLowerCase();
+  if(!value) return null;
+  return PRODUCTS.find(p=>
+    String(p.id).toLowerCase()===value ||
+    String(p.barcode||'').trim().toLowerCase()===value ||
+    String(p.name||'').trim().toLowerCase()===value
+  ) || null;
+}
 
 function renderInvoicesList(){
   const q = (document.getElementById('invlist-search').value||'').trim().toLowerCase();
@@ -2254,6 +2338,8 @@ function openInvoiceDetail(id){
   if(!inv) return;
   invListExpandedId = id;
   invListEditMode = false;
+  invListPendingAddedItems = [];
+  clearInvoiceListAddFields();
   document.getElementById('invlist-edit-toggle-btn').textContent = '✏️ تعديل';
   document.getElementById('invlist-detail-card').style.display='';
   renderInvoiceDetail();
@@ -2264,28 +2350,99 @@ function renderInvoiceDetail(){
   const card = document.getElementById('invlist-detail-card');
   const inv = INVOICES.find(i=>i.id===invListExpandedId);
   if(!inv){ card.style.display='none'; return; }
+
   document.getElementById('invlist-detail-title').textContent = `تفاصيل الفاتورة رقم ${inv.id}${inv.customerName?' - '+escapeHtml(inv.customerName):''}`;
+
   const tbody = document.getElementById('invlist-detail-body');
-  if(inv.items.length===0){
+  const savedItemsHtml = inv.items.map((it,idx)=> invListEditMode ? `
+    <tr>
+      <td>${escapeHtml(it.name)}</td>
+      <td><input type="number" min="1" step="1" value="${it.qty}" style="width:70px;padding:4px;" id="invlist-qty-${idx}"></td>
+      <td><input type="number" min="0" step="1" value="${it.price}" style="width:90px;padding:4px;" id="invlist-price-${idx}"></td>
+      <td>${fmtMoney((Number(it.qty)||0)*(Number(it.price)||0))}</td>
+      <td><button class="btn sm danger" onclick="deleteInvoiceItem(${idx})">حذف</button></td>
+    </tr>` : `
+    <tr>
+      <td>${escapeHtml(it.name)}</td>
+      <td>${it.qty}</td>
+      <td>${fmtMoney(it.price)}</td>
+      <td>${fmtMoney(it.total)}</td>
+      <td><button class="btn sm danger" onclick="deleteInvoiceItem(${idx})">حذف</button></td>
+    </tr>`).join('');
+
+  const pendingItemsHtml = invListEditMode ? invListPendingAddedItems.map((it,idx)=>`
+    <tr style="background:#eaf7ea;">
+      <td>${escapeHtml(it.name)} <span class="badge ok">مضافة الآن</span></td>
+      <td>${it.qty}</td>
+      <td>${fmtMoney(it.price)}</td>
+      <td>${fmtMoney(it.qty*it.price)}</td>
+      <td><button class="btn sm danger" onclick="removePendingInvoiceItem(${idx})">حذف</button></td>
+    </tr>`).join('') : '';
+
+  if(!savedItemsHtml && !pendingItemsHtml){
     tbody.innerHTML = `<tr class="empty-row"><td colspan="5">لا توجد مواد في هذه الفاتورة</td></tr>`;
   } else {
-    tbody.innerHTML = inv.items.map((it,idx)=> invListEditMode ? `
-      <tr>
-        <td>${escapeHtml(it.name)}</td>
-        <td><input type="number" min="1" step="1" value="${it.qty}" style="width:70px;padding:4px;" id="invlist-qty-${idx}"></td>
-        <td><input type="number" min="0" step="1" value="${it.price}" style="width:90px;padding:4px;" id="invlist-price-${idx}"></td>
-        <td>${fmtMoney(it.qty*it.price)}</td>
-        <td><button class="btn sm danger" onclick="deleteInvoiceItem(${idx})">حذف</button></td>
-      </tr>` : `
-      <tr>
-        <td>${escapeHtml(it.name)}</td>
-        <td>${it.qty}</td>
-        <td>${fmtMoney(it.price)}</td>
-        <td>${fmtMoney(it.total)}</td>
-        <td><button class="btn sm danger" onclick="deleteInvoiceItem(${idx})">حذف</button></td>
-      </tr>`).join('');
+    tbody.innerHTML = savedItemsHtml + pendingItemsHtml;
   }
-  document.getElementById('invlist-detail-total').textContent = fmtMoney(inv.total);
+
+  const baseTotal = inv.items.reduce((sum,it)=>sum + (Number(it.total)||0),0);
+  const pendingTotal = invListPendingAddedItems.reduce((sum,it)=>sum + ((Number(it.qty)||0)*(Number(it.price)||0)),0);
+  document.getElementById('invlist-detail-total').textContent = fmtMoney(baseTotal + pendingTotal);
+
+  const addBox = document.getElementById('invlist-add-item-box');
+  if(addBox) addBox.style.display = invListEditMode ? '' : 'none';
+}
+
+function removePendingInvoiceItem(idx){
+  if(!invListEditMode) return;
+  if(idx<0 || idx>=invListPendingAddedItems.length) return;
+  invListPendingAddedItems.splice(idx,1);
+  renderInvoiceDetail();
+}
+
+function addItemToInvoiceListEdit(){
+  const inv = INVOICES.find(i=>i.id===invListExpandedId);
+  if(!inv || !invListEditMode) return;
+
+  const searchValue = (document.getElementById('invlist-add-search').value||'').trim();
+  const qty = parseInt(document.getElementById('invlist-add-qty').value,10);
+  const price = Number(document.getElementById('invlist-add-price').value);
+
+  if(!searchValue){ showToast('الرجاء اختيار أو كتابة اسم المادة / الباركود','err'); return; }
+  if(isNaN(qty) || qty<=0){ showToast('الرجاء إدخال كمية صحيحة','err'); return; }
+  if(isNaN(price) || price<0){ showToast('الرجاء إدخال سعر صحيح','err'); return; }
+
+  const p = resolveInvoiceListAddProduct();
+  const existingPendingQty = invListPendingAddedItems
+    .filter(it=>p ? it.productId===p.id : false)
+    .reduce((sum,it)=>sum + (Number(it.qty)||0),0);
+  const existingInvoiceQty = p ? inv.items
+    .filter(it=>it.productId===p.id)
+    .reduce((sum,it)=>sum + (Number(it.qty)||0),0) : 0;
+
+  if(p){
+    const available = Number(p.qty)||0;
+    const alreadyCommittedToThisInvoice = existingInvoiceQty + existingPendingQty;
+    if(qty + alreadyCommittedToThisInvoice > available){
+      if(!confirm(`الكمية المطلوبة (${qty}) مع الكمية الموجودة لهذه المادة في الفاتورة تتجاوز المخزون الحالي (${available}). هل تريد المتابعة على أي حال؟`)) return;
+    }
+  }
+
+  invListPendingAddedItems.push({
+    productId: p ? p.id : null,
+    barcode: p ? p.barcode : '',
+    name: p ? p.name : searchValue,
+    category: p ? getCategory(p) : 'أخرى',
+    qty,
+    price,
+    cost: p ? Number(p.buyPrice)||0 : 0,
+    total: qty*price,
+    returnedQty: 0
+  });
+
+  clearInvoiceListAddFields();
+  renderInvoiceDetail();
+  showToast(`تمت إضافة "${p ? p.name : searchValue}" إلى الفاتورة، اضغط حفظ التعديلات لاعتمادها`,'good');
 }
 
 document.getElementById('invlist-edit-toggle-btn').addEventListener('click', ()=>{
@@ -2297,7 +2454,10 @@ document.getElementById('invlist-edit-toggle-btn').addEventListener('click', ()=
     if(pass===null) return;
     if(pass!==INVOICE_LIST_PASSWORD){ showToast('كلمة السر غير صحيحة','err'); return; }
     invListEditMode = true;
+    invListPendingAddedItems = [];
     document.getElementById('invlist-edit-toggle-btn').textContent = '💾 حفظ التعديلات';
+    refreshInvoiceListAddDatalist();
+    clearInvoiceListAddFields();
     renderInvoiceDetail();
     return;
   }
@@ -2321,16 +2481,49 @@ document.getElementById('invlist-edit-toggle-btn').addEventListener('click', ()=
     it.price = newPrice;
     it.total = (newQty - (it.returnedQty||0)) * newPrice;
   });
-  inv.total = inv.items.reduce((s,it)=>s+it.total,0);
+  // اعتماد المواد الجديدة داخل الفاتورة وتحديث المخزون مرة واحدة عند الحفظ.
+  invListPendingAddedItems.forEach(it=>{
+    inv.items.push({
+      productId: it.productId,
+      barcode: it.barcode || '',
+      name: it.name,
+      category: it.category || 'أخرى',
+      qty: Number(it.qty)||0,
+      price: Number(it.price)||0,
+      cost: Number(it.cost)||0,
+      total: (Number(it.qty)||0) * (Number(it.price)||0),
+      returnedQty: 0
+    });
+
+    if(it.productId){
+      const p = PRODUCTS.find(x=>x.id===it.productId);
+      if(p){
+        p.qty = Math.max(0, (Number(p.qty)||0) - (Number(it.qty)||0));
+        p.updatedAt = new Date().toISOString();
+      }
+    }
+  });
+
+  // إعادة حساب الفاتورة كفاتورة كلية بعد تعديل البنود وإضافة المواد.
+  inv.total = inv.items.reduce((sum,it)=>{
+    const qty = Number(it.qty)||0;
+    const price = Number(it.price)||0;
+    const returned = Number(it.returnedQty)||0;
+    it.total = Math.max(0, qty-returned) * price;
+    return sum + it.total;
+  },0);
   inv.fullyReturned = inv.items.length>0 && inv.items.every(it=>invoiceRemainingQty(it)<=0);
+
+  invListPendingAddedItems = [];
   persistAll();
 
   invListEditMode = false;
   document.getElementById('invlist-edit-toggle-btn').textContent = '✏️ تعديل';
+  clearInvoiceListAddFields();
   renderInvoiceDetail();
   renderInvoicesList();
   renderStock(); renderArchiveTable();
-  showToast(`تم حفظ التعديلات على الفاتورة رقم ${inv.id}`,'good');
+  showToast(`تم حفظ التعديلات وإعادة حساب الفاتورة رقم ${inv.id} كفاتورة كلية`,'good');
 });
 
 function deleteInvoiceItem(idx){
@@ -2363,9 +2556,25 @@ function deleteInvoiceItem(idx){
   showToast('تم حذف المادة من الفاتورة','good');
 }
 
+document.getElementById('invlist-add-item-btn').addEventListener('click', addItemToInvoiceListEdit);
+
+document.getElementById('invlist-add-clear-btn').addEventListener('click', clearInvoiceListAddFields);
+
+document.getElementById('invlist-add-search').addEventListener('input', ()=>{
+  const p = resolveInvoiceListAddProduct();
+  selectInvoiceListAddProduct(p);
+});
+
+document.getElementById('invlist-add-search').addEventListener('change', ()=>{
+  const p = resolveInvoiceListAddProduct();
+  selectInvoiceListAddProduct(p);
+});
+
 document.getElementById('invlist-close-btn').addEventListener('click', ()=>{
   invListExpandedId = null;
   invListEditMode = false;
+  invListPendingAddedItems = [];
+  clearInvoiceListAddFields();
   document.getElementById('invlist-detail-card').style.display='none';
 });
 
