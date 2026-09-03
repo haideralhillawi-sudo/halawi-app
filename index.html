@@ -443,6 +443,7 @@
 })();
 </script>
 
+<meta name="halawi-stock-enhanced" content="1">
 </head>
 <body>
 
@@ -4055,6 +4056,671 @@ initFirebaseSync();
   window.printAdvancedDebtInvoice=printAdvancedDebtInvoice;
   window.renderDebts=renderDebts;
   window.checkNotifications=checkNotifications;
+})();
+</script>
+
+
+<!-- ================================================================
+     HALAWI_ADVANCED_STOCK_CONTROLS_V1
+     إضافة مخزون متقدمة + تصميم تفاعلي جديد
+     لا تحذف أو تستبدل أي وظيفة أصلية.
+================================================================ -->
+<style id="halawi-advanced-stock-style">
+  /* ===== هوية بصرية جديدة - طبقة إضافية فقط ===== */
+  :root{
+    --brand:#6c4cf6;
+    --brand-dark:#3f2a9d;
+    --brand-bg:#f1edff;
+    --ink:#182033;
+    --ink-2:#59627a;
+    --muted:#8a93a8;
+    --grid:#e5e8f0;
+    --baseline:#c9cfdd;
+    --surface:#ffffff;
+    --page:#f4f6fb;
+    --good:#10a878;
+    --warning:#f2a51a;
+    --critical:#e5484d;
+    --border:rgba(63,42,157,.12);
+  }
+
+  body{
+    background:
+      radial-gradient(circle at 8% 5%, rgba(108,76,246,.10), transparent 28%),
+      radial-gradient(circle at 92% 8%, rgba(16,168,120,.08), transparent 25%),
+      linear-gradient(135deg,#f7f8fc 0%,#eef1f8 100%);
+    color:var(--ink);
+  }
+
+  #sidebar{
+    background:
+      radial-gradient(circle at 20% 10%,rgba(255,255,255,.16),transparent 24%),
+      linear-gradient(160deg,#24145f 0%,#4c2db8 48%,#6c4cf6 100%);
+    box-shadow:10px 0 35px rgba(36,20,95,.16);
+  }
+
+  #sidebar .brand{
+    padding:20px 14px 18px;
+    border-bottom-color:rgba(255,255,255,.14);
+  }
+
+  #sidebar .brand h1{
+    font-size:20px;
+    letter-spacing:.2px;
+  }
+
+  .nav-btn{
+    margin:3px 10px;
+    width:calc(100% - 20px);
+    border-radius:12px;
+    border-right:0;
+    transition:transform .18s ease,background .18s ease,box-shadow .18s ease;
+  }
+
+  .nav-btn:hover{
+    background:rgba(255,255,255,.14);
+    transform:translateX(-3px);
+  }
+
+  .nav-btn.active{
+    background:linear-gradient(135deg,rgba(255,255,255,.22),rgba(255,255,255,.10));
+    border-right:0;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.12),0 6px 18px rgba(0,0,0,.10);
+  }
+
+  main{
+    background:transparent;
+  }
+
+  .page-title{
+    color:#29205f;
+    font-weight:900;
+    letter-spacing:-.3px;
+  }
+
+  .page-sub{
+    color:#6d7690;
+  }
+
+  .card{
+    background:rgba(255,255,255,.90);
+    border:1px solid rgba(108,76,246,.10);
+    border-radius:18px;
+    box-shadow:0 10px 30px rgba(36,34,74,.07);
+    backdrop-filter:blur(8px);
+    transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+  }
+
+  .card:hover{
+    box-shadow:0 14px 36px rgba(36,34,74,.10);
+    border-color:rgba(108,76,246,.18);
+  }
+
+  .stat-tile{
+    border-radius:16px;
+    border:1px solid rgba(108,76,246,.10);
+    background:linear-gradient(145deg,#fff,#f7f5ff);
+    box-shadow:0 8px 22px rgba(63,42,157,.07);
+    transition:transform .18s ease,box-shadow .18s ease;
+  }
+
+  .stat-tile:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 28px rgba(63,42,157,.12);
+  }
+
+  input,select,textarea{
+    border:1px solid #dfe3ee !important;
+    border-radius:11px !important;
+    background:#fff !important;
+    color:#20273a !important;
+    transition:border-color .18s ease,box-shadow .18s ease,transform .18s ease;
+  }
+
+  input:focus,select:focus,textarea:focus{
+    border-color:#8066f7 !important;
+    box-shadow:0 0 0 4px rgba(108,76,246,.12) !important;
+    outline:none;
+  }
+
+  .btn{
+    border-radius:11px;
+    background:linear-gradient(135deg,#6c4cf6,#4c35bd);
+    box-shadow:0 6px 16px rgba(108,76,246,.18);
+    transition:transform .16s ease,box-shadow .16s ease,filter .16s ease;
+  }
+
+  .btn:hover{
+    filter:brightness(1.06);
+    transform:translateY(-2px);
+    box-shadow:0 9px 20px rgba(108,76,246,.25);
+  }
+
+  .btn.secondary{
+    background:#fff;
+    color:#4c35bd;
+    border:1px solid #bfb4ff;
+    box-shadow:none;
+  }
+
+  .btn.secondary:hover{
+    background:#f5f2ff;
+  }
+
+  .btn.good{
+    background:linear-gradient(135deg,#10b981,#078b68);
+  }
+
+  .btn.danger{
+    background:linear-gradient(135deg,#ef5350,#c93439);
+  }
+
+  table{
+    font-size:13.5px;
+  }
+
+  thead th{
+    background:linear-gradient(135deg,#f0edff,#e8f7f2);
+    color:#3f2a9d;
+    border-bottom:2px solid #dcd6fb;
+  }
+
+  tbody tr{
+    transition:background .15s ease,transform .15s ease;
+  }
+
+  tbody tr:hover{
+    background:#f7f5ff !important;
+  }
+
+  .badge{
+    border-radius:999px;
+  }
+
+  /* ===== عناصر التحكم الجديدة في المخزون ===== */
+  .halawi-stock-actions{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    flex-wrap:wrap;
+    min-width:180px;
+  }
+
+  .halawi-stock-mini{
+    min-width:34px;
+    height:34px;
+    padding:0 9px !important;
+    border-radius:9px !important;
+    font-size:15px !important;
+    font-weight:900;
+  }
+
+  .halawi-stock-mini.add{
+    background:linear-gradient(135deg,#12b886,#078f6a) !important;
+  }
+
+  .halawi-stock-mini.sub{
+    background:linear-gradient(135deg,#ef5350,#c52f35) !important;
+  }
+
+  .halawi-stock-edit{
+    background:linear-gradient(135deg,#6c4cf6,#4630ae) !important;
+  }
+
+  .halawi-stock-qty-pill{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:48px;
+    height:30px;
+    padding:0 9px;
+    border-radius:999px;
+    background:#f1edff;
+    color:#3f2a9d;
+    font-weight:900;
+    border:1px solid #ddd6ff;
+  }
+
+  /* ===== نافذة تعديل المخزون ===== */
+  #halawi-stock-modal{
+    position:fixed;
+    inset:0;
+    z-index:100000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    background:rgba(20,16,48,.62);
+    backdrop-filter:blur(5px);
+  }
+
+  #halawi-stock-modal.show{
+    display:flex;
+  }
+
+  .halawi-stock-modal-card{
+    width:min(520px,96vw);
+    max-height:90vh;
+    overflow:auto;
+    background:linear-gradient(145deg,#fff,#faf9ff);
+    border:1px solid rgba(108,76,246,.18);
+    border-radius:22px;
+    padding:24px;
+    box-shadow:0 25px 80px rgba(17,12,50,.28);
+    direction:rtl;
+    animation:halawiStockModalIn .2s ease;
+  }
+
+  @keyframes halawiStockModalIn{
+    from{opacity:0;transform:translateY(15px) scale(.98)}
+    to{opacity:1;transform:translateY(0) scale(1)}
+  }
+
+  .halawi-stock-modal-head{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    align-items:center;
+    margin-bottom:16px;
+  }
+
+  .halawi-stock-modal-head h3{
+    margin:0;
+    color:#35247f;
+  }
+
+  .halawi-stock-close{
+    width:38px;
+    height:38px;
+    border:0;
+    border-radius:10px;
+    background:#f0edff;
+    color:#4934aa;
+    font-size:22px;
+    cursor:pointer;
+  }
+
+  .halawi-stock-current{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin:12px 0 16px;
+  }
+
+  .halawi-stock-current-box{
+    padding:14px;
+    border-radius:14px;
+    background:#f5f3ff;
+    border:1px solid #e4dfff;
+    text-align:center;
+  }
+
+  .halawi-stock-current-box .v{
+    font-size:24px;
+    font-weight:900;
+    color:#3f2a9d;
+  }
+
+  .halawi-stock-current-box .l{
+    font-size:12px;
+    color:#727a90;
+    margin-top:4px;
+  }
+
+  .halawi-stock-operation{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:8px;
+    margin:12px 0;
+  }
+
+  .halawi-stock-operation button{
+    padding:12px 8px;
+    border-radius:11px;
+    border:1px solid #ddd8f7;
+    background:#fff;
+    color:#4432a1;
+    cursor:pointer;
+    font-family:inherit;
+    font-weight:800;
+  }
+
+  .halawi-stock-operation button.active{
+    background:linear-gradient(135deg,#6c4cf6,#4630ae);
+    color:#fff;
+    border-color:transparent;
+    box-shadow:0 7px 18px rgba(108,76,246,.22);
+  }
+
+  .halawi-stock-help{
+    color:#737b91;
+    font-size:12px;
+    line-height:1.8;
+    background:#f7f8fc;
+    padding:10px 12px;
+    border-radius:10px;
+    margin-top:10px;
+  }
+
+  @media(max-width:700px){
+    .halawi-stock-actions{
+      min-width:150px;
+    }
+
+    .halawi-stock-mini{
+      height:32px;
+      min-width:32px;
+      padding:0 7px !important;
+    }
+
+    .halawi-stock-current{
+      grid-template-columns:1fr 1fr;
+    }
+
+    .halawi-stock-operation{
+      grid-template-columns:1fr;
+    }
+
+    .card{
+      border-radius:15px;
+    }
+  }
+</style>
+
+<script id="halawi-advanced-stock-script">
+(function(){
+  'use strict';
+
+  function stockEsc(v){
+    if(typeof escapeHtml === 'function') return escapeHtml(String(v ?? ''));
+    return String(v ?? '').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+  }
+
+  function stockFindProduct(id){
+    return (typeof PRODUCTS !== 'undefined' && Array.isArray(PRODUCTS))
+      ? PRODUCTS.find(p=>String(p.id)===String(id))
+      : null;
+  }
+
+  function stockCommit(message){
+    if(typeof persistAll === 'function') persistAll();
+    if(typeof renderStock === 'function') renderStock();
+    if(typeof renderArchiveTable === 'function') renderArchiveTable();
+    if(typeof refreshAllViews === 'function'){
+      try{ refreshAllViews(); }catch(e){}
+    }
+    if(typeof checkNotifications === 'function'){
+      try{ checkNotifications(); }catch(e){}
+    }
+    if(typeof showToast === 'function') showToast(message,'good');
+  }
+
+  function changeStock(id, delta){
+    const p=stockFindProduct(id);
+    if(!p) return;
+
+    const amount=Math.abs(Number(delta)||0);
+    if(!amount) return;
+
+    const oldQty=Math.max(0,Number(p.qty)||0);
+    let newQty=oldQty+(delta>0?amount:-amount);
+
+    if(newQty<0){
+      if(typeof showToast==='function') showToast('لا يمكن إنقاص المخزون إلى أقل من صفر','err');
+      return;
+    }
+
+    const action=delta>0?'إضافة':'إنقاص';
+    if(!confirm(`هل تريد ${action} ${amount} من مادة "${p.name}"؟\n\nالكمية الحالية: ${oldQty}\nالكمية الجديدة: ${newQty}`)) return;
+
+    p.qty=newQty;
+    p.updatedAt=new Date().toISOString();
+    p.updatedBy=(typeof currentUser!=='undefined' ? currentUser : '') || p.updatedBy || '';
+
+    stockCommit(`تم ${action} ${amount} من "${p.name}" — الكمية الآن ${newQty}`);
+  }
+
+  let stockModalProductId=null;
+  let stockOperation='set';
+
+  function ensureStockModal(){
+    if(document.getElementById('halawi-stock-modal')) return;
+
+    const modal=document.createElement('div');
+    modal.id='halawi-stock-modal';
+    modal.innerHTML=`
+      <div class="halawi-stock-modal-card">
+        <div class="halawi-stock-modal-head">
+          <h3>📦 تعديل المخزون</h3>
+          <button type="button" class="halawi-stock-close" id="halawi-stock-close">×</button>
+        </div>
+
+        <div id="halawi-stock-product-name" style="font-size:17px;font-weight:900;color:#34237d;"></div>
+
+        <div class="halawi-stock-current">
+          <div class="halawi-stock-current-box">
+            <div class="v" id="halawi-stock-old-qty">0</div>
+            <div class="l">الكمية الحالية</div>
+          </div>
+          <div class="halawi-stock-current-box">
+            <div class="v" id="halawi-stock-preview-qty">0</div>
+            <div class="l">الكمية بعد العملية</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>نوع العملية</label>
+          <div class="halawi-stock-operation">
+            <button type="button" data-stock-op="set" class="active">تحديد كمية نهائية</button>
+            <button type="button" data-stock-op="add">➕ إضافة</button>
+            <button type="button" data-stock-op="sub">➖ إنقاص</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label id="halawi-stock-input-label">الكمية النهائية</label>
+          <input type="number" id="halawi-stock-input" min="0" step="1" value="0">
+        </div>
+
+        <div class="halawi-stock-help">
+          يمكنك تحديد الكمية النهائية مباشرة، أو اختيار إضافة/إنقاص عدد محدد من الكمية الحالية.
+          لن يسمح النظام بإنقاص المخزون إلى أقل من صفر.
+        </div>
+
+        <div class="btn-row" style="margin-top:16px;">
+          <button type="button" class="btn good" id="halawi-stock-save">💾 حفظ تعديل المخزون</button>
+          <button type="button" class="btn secondary" id="halawi-stock-cancel">إلغاء</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    document.getElementById('halawi-stock-close').addEventListener('click',closeStockModal);
+    document.getElementById('halawi-stock-cancel').addEventListener('click',closeStockModal);
+
+    modal.addEventListener('click',e=>{
+      if(e.target===modal) closeStockModal();
+    });
+
+    modal.querySelectorAll('[data-stock-op]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        stockOperation=btn.dataset.stockOp;
+        modal.querySelectorAll('[data-stock-op]').forEach(x=>x.classList.remove('active'));
+        btn.classList.add('active');
+        updateStockModalLabels();
+        updateStockPreview();
+      });
+    });
+
+    document.getElementById('halawi-stock-input').addEventListener('input',updateStockPreview);
+    document.getElementById('halawi-stock-save').addEventListener('click',saveStockModal);
+  }
+
+  function updateStockModalLabels(){
+    const label=document.getElementById('halawi-stock-input-label');
+    if(!label) return;
+    if(stockOperation==='set') label.textContent='الكمية النهائية';
+    if(stockOperation==='add') label.textContent='عدد القطع المراد إضافتها';
+    if(stockOperation==='sub') label.textContent='عدد القطع المراد إنقاصها';
+  }
+
+  function updateStockPreview(){
+    const p=stockFindProduct(stockModalProductId);
+    const input=document.getElementById('halawi-stock-input');
+    const preview=document.getElementById('halawi-stock-preview-qty');
+    if(!p || !input || !preview) return;
+
+    const oldQty=Math.max(0,Number(p.qty)||0);
+    let value=Math.max(0,parseInt(input.value,10)||0);
+    let next=oldQty;
+
+    if(stockOperation==='set') next=value;
+    if(stockOperation==='add') next=oldQty+value;
+    if(stockOperation==='sub') next=Math.max(0,oldQty-value);
+
+    preview.textContent=String(next);
+  }
+
+  function openStockModal(id){
+    const p=stockFindProduct(id);
+    if(!p) return;
+
+    ensureStockModal();
+    stockModalProductId=id;
+    stockOperation='set';
+
+    const modal=document.getElementById('halawi-stock-modal');
+    const oldQty=Math.max(0,Number(p.qty)||0);
+
+    document.getElementById('halawi-stock-product-name').textContent=
+      `المادة: ${p.name}`;
+
+    document.getElementById('halawi-stock-old-qty').textContent=String(oldQty);
+    document.getElementById('halawi-stock-input').value=String(oldQty);
+
+    modal.querySelectorAll('[data-stock-op]').forEach(x=>{
+      x.classList.toggle('active',x.dataset.stockOp==='set');
+    });
+
+    updateStockModalLabels();
+    updateStockPreview();
+    modal.classList.add('show');
+
+    setTimeout(()=>document.getElementById('halawi-stock-input')?.focus(),50);
+  }
+
+  function closeStockModal(){
+    document.getElementById('halawi-stock-modal')?.classList.remove('show');
+    stockModalProductId=null;
+  }
+
+  function saveStockModal(){
+    const p=stockFindProduct(stockModalProductId);
+    const input=document.getElementById('halawi-stock-input');
+    if(!p || !input) return;
+
+    const oldQty=Math.max(0,Number(p.qty)||0);
+    const value=parseInt(input.value,10);
+
+    if(isNaN(value) || value<0){
+      if(typeof showToast==='function') showToast('أدخل كمية صحيحة','err');
+      return;
+    }
+
+    let newQty=oldQty;
+    if(stockOperation==='set') newQty=value;
+    if(stockOperation==='add') newQty=oldQty+value;
+    if(stockOperation==='sub') newQty=Math.max(0,oldQty-value);
+
+    if(newQty===oldQty){
+      closeStockModal();
+      return;
+    }
+
+    let action='تعديل';
+    if(stockOperation==='add') action=`إضافة ${value}`;
+    if(stockOperation==='sub') action=`إنقاص ${value}`;
+
+    if(!confirm(`تأكيد ${action} للمادة "${p.name}"؟\n\nمن ${oldQty} إلى ${newQty}`)) return;
+
+    p.qty=newQty;
+    p.updatedAt=new Date().toISOString();
+    p.updatedBy=(typeof currentUser!=='undefined' ? currentUser : '') || p.updatedBy || '';
+
+    closeStockModal();
+    stockCommit(`تم تعديل مخزون "${p.name}" من ${oldQty} إلى ${newQty}`);
+  }
+
+  function enhanceStockRows(){
+    const tbody=document.getElementById('stk-table-body');
+    if(!tbody) return;
+
+    const oldHead=tbody.closest('table')?.querySelector('thead tr');
+    if(oldHead && !oldHead.querySelector('.halawi-stock-actions-head')){
+      const th=document.createElement('th');
+      th.className='halawi-stock-actions-head';
+      th.textContent='إدارة المخزون';
+      oldHead.appendChild(th);
+    }
+
+    [...tbody.querySelectorAll('tr')].forEach(row=>{
+      if(row.querySelector('.halawi-stock-actions')) return;
+
+      const cells=row.querySelectorAll('td');
+      if(cells.length<8) return;
+
+      const barcode=(cells[0].textContent||'').trim();
+      const name=(cells[1].textContent||'').trim();
+
+      let p=null;
+      if(typeof PRODUCTS!=='undefined' && Array.isArray(PRODUCTS)){
+        p=PRODUCTS.find(x=>
+          String(x.name||'').trim()===name &&
+          String(x.barcode||'').trim()===(barcode==='-'?'':barcode)
+        );
+        if(!p) p=PRODUCTS.find(x=>String(x.name||'').trim()===name);
+      }
+      if(!p) return;
+
+      const td=document.createElement('td');
+      td.className='halawi-stock-actions no-print';
+      td.innerHTML=`
+        <button type="button" class="btn sm halawi-stock-mini add" title="إضافة قطعة">＋</button>
+        <span class="halawi-stock-qty-pill">${Number(p.qty)||0}</span>
+        <button type="button" class="btn sm halawi-stock-mini sub" title="إنقاص قطعة">−</button>
+        <button type="button" class="btn sm halawi-stock-mini halawi-stock-edit" title="تعديل المخزون">✏️</button>
+      `;
+
+      td.querySelector('.add').addEventListener('click',()=>changeStock(p.id,1));
+      td.querySelector('.sub').addEventListener('click',()=>changeStock(p.id,-1));
+      td.querySelector('.halawi-stock-edit').addEventListener('click',()=>openStockModal(p.id));
+
+      row.appendChild(td);
+    });
+  }
+
+  /* نلف الدالة الأصلية بدل حذفها، ثم نضيف أدوات الإدارة */
+  const originalRenderStock=window.renderStock;
+  if(typeof originalRenderStock==='function'){
+    window.renderStock=function(){
+      originalRenderStock.apply(this,arguments);
+      enhanceStockRows();
+    };
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    ensureStockModal();
+    setTimeout(()=>{
+      try{
+        if(typeof window.renderStock==='function') window.renderStock();
+        else enhanceStockRows();
+      }catch(e){}
+    },350);
+  });
+
+  window.halawiChangeStock=changeStock;
+  window.halawiOpenStockEditor=openStockModal;
 })();
 </script>
 
