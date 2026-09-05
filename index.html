@@ -444,6 +444,144 @@
 </script>
 
 <meta name="halawi-stock-enhanced" content="1">
+<style id="halawi-horizontal-nav-v2">
+/* ================================================================
+   واجهة القائمة الرئيسية — بطاقات عرضية كبيرة + لمعان + فقاعة
+   ================================================================ */
+html,body{min-height:100%;}
+body{display:block !important;overflow-x:hidden;}
+#sidebar{
+  width:100% !important;
+  flex:0 0 auto !important;
+  min-height:0 !important;
+  height:auto !important;
+  padding:10px 12px 14px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  position:relative !important;
+  top:0 !important;
+  z-index:1000;
+  box-shadow:0 10px 32px rgba(36,20,95,.18) !important;
+}
+#sidebar .brand{display:none !important;}
+#sidebar .sidebar-user{
+  order:0;
+  width:100%;
+  margin:0 0 10px !important;
+  padding:5px 8px 8px !important;
+  border-bottom:1px solid rgba(255,255,255,.12) !important;
+}
+#sidebar .sidebar-user .logout-btn{padding:4px 12px !important;}
+#sidebar .foot{display:none !important;}
+#sidebar::before{
+  content:"القائمة الرئيسية";
+  display:block;
+  color:#fff;
+  font-size:13px;
+  font-weight:900;
+  text-align:center;
+  opacity:.9;
+  padding:2px 0 10px;
+}
+.nav-btn{
+  position:relative !important;
+  overflow:hidden !important;
+  isolation:isolate;
+  flex:0 0 auto !important;
+  width:auto !important;
+  min-width:150px !important;
+  min-height:66px !important;
+  margin:0 !important;
+  padding:13px 18px !important;
+  justify-content:center !important;
+  gap:9px !important;
+  border:1px solid rgba(255,255,255,.13) !important;
+  border-radius:16px !important;
+  background:linear-gradient(145deg,rgba(255,255,255,.17),rgba(255,255,255,.075)) !important;
+  box-shadow:0 7px 18px rgba(17,8,64,.16), inset 0 1px 0 rgba(255,255,255,.12) !important;
+  transition:transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease !important;
+  text-align:center !important;
+  font-size:15px !important;
+  font-weight:800 !important;
+}
+.nav-btn .ic{font-size:22px !important;width:auto !important;}
+#sidebar > .nav-btn:not(.sidebar-user){
+  display:inline-flex !important;
+}
+#sidebar{flex-wrap:wrap !important;flex-direction:row !important;align-items:center !important;justify-content:center !important;gap:10px !important;}
+#sidebar::before{width:100%;flex:0 0 100%;}
+#sidebar .sidebar-user{flex:0 0 100%;}
+.nav-btn::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-85%;
+  width:42%;
+  height:100%;
+  transform:skewX(-24deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.74),transparent);
+  opacity:0;
+  pointer-events:none;
+  transition:left .55s ease,opacity .2s ease;
+  z-index:2;
+}
+.nav-btn:hover::after,.nav-btn.active::after{left:145%;opacity:1;}
+.nav-btn:hover{
+  transform:translateY(-4px) scale(1.025) !important;
+  background:linear-gradient(145deg,rgba(255,255,255,.27),rgba(255,255,255,.11)) !important;
+  border-color:rgba(255,255,255,.3) !important;
+  box-shadow:0 14px 28px rgba(17,8,64,.25),0 0 0 4px rgba(255,255,255,.05) !important;
+}
+.nav-btn.active{
+  transform:translateY(-2px) scale(1.035) !important;
+  background:linear-gradient(145deg,rgba(255,255,255,.32),rgba(255,255,255,.13)) !important;
+  border-color:rgba(255,255,255,.38) !important;
+  box-shadow:0 16px 30px rgba(17,8,64,.28),0 0 0 4px rgba(255,255,255,.07),inset 0 1px 0 rgba(255,255,255,.28) !important;
+}
+/* تأثير الفقاعة */
+.nav-btn::before{
+  content:"";
+  position:absolute;
+  width:12px;
+  height:12px;
+  right:10%;
+  bottom:7px;
+  border-radius:50%;
+  background:rgba(255,255,255,.3);
+  opacity:0;
+  transform:scale(.25);
+  box-shadow:0 0 0 0 rgba(255,255,255,.2);
+  transition:opacity .2s ease,transform .35s ease,box-shadow .45s ease;
+  z-index:1;
+  pointer-events:none;
+}
+.nav-btn:hover::before,.nav-btn.active::before{
+  opacity:.95;
+  transform:scale(5.2);
+  box-shadow:0 0 0 16px rgba(255,255,255,.05),0 0 35px 8px rgba(255,255,255,.12);
+}
+#main{
+  width:100% !important;
+  padding:20px 20px 35px !important;
+  min-width:0 !important;
+}
+#topbar{margin:-20px -20px 20px !important;padding:9px 20px !important;}
+/* لا تعرض أي قسم عند فتح البرنامج؛ يتم فتحه فقط بالنقر على القائمة. */
+.section{display:none !important;}
+.section.active{display:block !important;}
+/* زر حذف الفاتورة يكون واضحاً لكن لا يغيّر وظيفة زر التفاصيل. */
+.invoice-delete-btn{margin-right:5px !important;}
+@media(max-width:980px){
+  .nav-btn{min-width:135px !important;min-height:62px !important;padding:11px 13px !important;font-size:14px !important;}
+}
+@media(max-width:650px){
+  #sidebar{gap:7px !important;padding:9px 7px 11px !important;}
+  .nav-btn{min-width:calc(50% - 4px) !important;min-height:62px !important;font-size:13px !important;border-radius:14px !important;}
+  .nav-btn .ic{font-size:20px !important;}
+  #main{padding:14px 10px 30px !important;}
+  #topbar{margin:-14px -10px 14px !important;padding:8px 12px !important;}
+}
+</style>
 </head>
 <body>
 
@@ -473,7 +611,7 @@
     <span class="name" id="sidebar-user-name"></span>
     <div><button class="logout-btn" id="logout-btn">تسجيل خروج</button></div>
   </div>
-  <button class="nav-btn active" data-sec="sec-archive"><span class="ic">📥</span> أرشفة المواد</button>
+  <button class="nav-btn" data-sec="sec-archive"><span class="ic">📥</span> أرشفة المواد</button>
   <button class="nav-btn" data-sec="sec-purchases"><span class="ic">🦷</span> مسواك المكتبة</button>
   <button class="nav-btn" data-sec="sec-invoice"><span class="ic">🧾</span> فاتورة مبيعات</button>
   <button class="nav-btn" data-sec="sec-invoicelist"><span class="ic">📋</span> قائمة الفواتير</button>
@@ -500,7 +638,7 @@
   </div>
 
   <!-- ================= SECTION 1: ARCHIVE ================= -->
-  <section class="section active" id="sec-archive">
+  <section class="section" id="sec-archive">
     <h2 class="page-title">📥 أرشفة المواد</h2>
     <p class="page-sub">إضافة مادة جديدة للمخزن أو تحديث كمية مادة موجودة، مع إمكانية مسح الباركود مباشرة من كاميرا الجهاز.</p>
 
@@ -1312,6 +1450,9 @@ function showApp(){
   const box = document.getElementById('sidebar-user-box');
   box.style.display='block';
   document.getElementById('sidebar-user-name').textContent = '👤 ' + currentUser;
+  // عند تحديث الصفحة لا نفتح محتوى أي قسم تلقائياً.
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
 }
 function showLoginOverlay(){
   document.getElementById('login-overlay').classList.remove('hidden');
@@ -1354,25 +1495,77 @@ function setSyncIndicator(state, text){
   el.className = state;
   document.getElementById('sync-indicator-text').textContent = text;
 }
+function firebaseArray(value){
+  if(Array.isArray(value)) return value;
+  if(value && typeof value === 'object') return Object.values(value);
+  return [];
+}
+function normalizeInvoiceForList(inv){
+  const x = (inv && typeof inv==='object') ? inv : {};
+  x.items = firebaseArray(x.items);
+  x.items = x.items.map(it=>{
+    const item = (it && typeof it==='object') ? it : {};
+    item.qty = Math.max(0, Number(item.qty)||0);
+    item.price = Math.max(0, Number(item.price)||0);
+    item.total = Number(item.total);
+    if(!Number.isFinite(item.total)) item.total = item.qty * item.price;
+    item.returnedQty = Math.max(0, Number(item.returnedQty)||0);
+    return item;
+  });
+  x.total = Number(x.total);
+  if(!Number.isFinite(x.total)) x.total = x.items.reduce((sum,it)=>sum + (Number(it.total)||0),0);
+  return x;
+}
+function normalizeFirebaseData(val){
+  return {
+    products: firebaseArray(val && val.products),
+    invoices: firebaseArray(val && val.invoices).map(normalizeInvoiceForList),
+    returns: firebaseArray(val && val.returns),
+    purchases: firebaseArray(val && val.purchases),
+    dailyIncome: firebaseArray(val && val.dailyIncome),
+    counter: (val && val.counter && typeof val.counter==='object') ? val.counter : null
+  };
+}
 function initFirebaseSync(){
   try{
-    if(typeof firebase === 'undefined'){ setSyncIndicator('offline','Firebase غير متوفر (لا اتصال بالإنترنت)'); return; }
-    firebase.initializeApp(FIREBASE_CONFIG);
+    if(typeof firebase === 'undefined'){ setSyncIndicator('offline','Firebase غير متوفر'); return; }
+    if(!firebase.apps || firebase.apps.length===0) firebase.initializeApp(FIREBASE_CONFIG);
     const db = firebase.database();
     fbDbRef = db.ref('halawi_store');
     setSyncIndicator('syncing','جارٍ الاتصال بالمزامنة...');
+
     fbDbRef.on('value', (snap)=>{
       fbReady = true;
       const val = snap.val();
-      setSyncIndicator('online','متصل - تمت المزامنة');
-      if(!val) return; // لا توجد بيانات بعد على الخادم
+
+      // الخادم فارغ: لا تمسح بيانات الجهاز. ارفع البيانات المحلية مرة واحدة.
+      if(!val || typeof val!=='object'){
+        setSyncIndicator('online','متصل - سيتم رفع البيانات المحلية');
+        applyingRemoteUpdate = false;
+        syncToFirebase(true);
+        return;
+      }
+
+      const remote = normalizeFirebaseData(val);
+      const localHasData = PRODUCTS.length || INVOICES.length || RETURNS.length || PURCHASES.length || DAILY_INCOME.length;
+      const remoteHasData = remote.products.length || remote.invoices.length || remote.returns.length || remote.purchases.length || remote.dailyIncome.length;
+
+      // لا تستبدل بيانات الجهاز بقاعدة فارغة/ناقصة. عند وجود بيانات محلية فقط، ارفعها.
+      if(localHasData && !remoteHasData){
+        setSyncIndicator('syncing','رفع البيانات المحلية إلى Firebase...');
+        applyingRemoteUpdate = false;
+        syncToFirebase(true);
+        return;
+      }
+
       applyingRemoteUpdate = true;
-      PRODUCTS = val.products || [];
-      INVOICES = val.invoices || [];
-      RETURNS = val.returns || [];
-      PURCHASES = val.purchases || [];
-      DAILY_INCOME = Array.isArray(val.dailyIncome) ? val.dailyIncome : (val.dailyIncome && typeof val.dailyIncome === 'object' ? Object.values(val.dailyIncome) : []);
-      if(val.counter) COUNTER = val.counter;
+      PRODUCTS = remote.products;
+      INVOICES = remote.invoices;
+      RETURNS = remote.returns;
+      PURCHASES = remote.purchases;
+      DAILY_INCOME = remote.dailyIncome;
+      if(remote.counter) COUNTER = remote.counter;
+
       saveData(STORE_KEYS.products, PRODUCTS);
       saveData(STORE_KEYS.invoices, INVOICES);
       saveData(STORE_KEYS.returns, RETURNS);
@@ -1380,27 +1573,47 @@ function initFirebaseSync(){
       saveData(STORE_KEYS.dailyIncome, DAILY_INCOME);
       saveData(STORE_KEYS.counter, COUNTER);
       applyingRemoteUpdate = false;
+      setSyncIndicator('online','متصل - تمت المزامنة');
+
+      // مهم: تحديث قائمة الفواتير فور وصول Firebase، وليس فقط بقية الشاشات.
       if(typeof refreshAllViews === 'function') refreshAllViews();
+      if(typeof renderInvoicesList === 'function') renderInvoicesList();
+      if(typeof renderDebts === 'function') renderDebts();
     }, (err)=>{
+      fbReady = false;
       console.error('Firebase sync error', err);
-      setSyncIndicator('offline','تعذّر الاتصال بالمزامنة');
+      setSyncIndicator('offline','تعذّر الاتصال بـ Firebase');
     });
   }catch(e){
+    fbReady = false;
     console.error('Firebase init error', e);
-    setSyncIndicator('offline','تعذّر الاتصال بالمزامنة');
+    setSyncIndicator('offline','تعذّر تشغيل مزامنة Firebase');
   }
 }
-function syncToFirebase(){
+function syncToFirebase(immediate=false){
   if(!fbDbRef || applyingRemoteUpdate) return;
-  setSyncIndicator('syncing','جارٍ الحفظ في المزامنة...');
+  setSyncIndicator('syncing','جارٍ الحفظ في Firebase...');
   clearTimeout(fbSyncTimer);
-  fbSyncTimer = setTimeout(()=>{
-    fbDbRef.update({
-      products: PRODUCTS, invoices: INVOICES, returns: RETURNS, purchases: PURCHASES, dailyIncome: DAILY_INCOME, counter: COUNTER,
-      updatedAt: Date.now(), updatedBy: currentUser || null
-    }).then(()=> setSyncIndicator('online','متصل - تمت المزامنة'))
-      .catch(e=>{ console.error('Firebase set error', e); setSyncIndicator('offline','تعذّر حفظ المزامنة'); });
-  }, 400);
+  const doWrite=()=>{
+    const payload={
+      products: Array.isArray(PRODUCTS)?PRODUCTS:[],
+      invoices: Array.isArray(INVOICES)?INVOICES.map(normalizeInvoiceForList):[],
+      returns: Array.isArray(RETURNS)?RETURNS:[],
+      purchases: Array.isArray(PURCHASES)?PURCHASES:[],
+      dailyIncome: Array.isArray(DAILY_INCOME)?DAILY_INCOME:[],
+      counter: COUNTER || {invoice:1000},
+      updatedAt: Date.now(),
+      updatedBy: currentUser || null
+    };
+    fbDbRef.set(payload).then(()=>{
+      fbReady=true;
+      setSyncIndicator('online','متصل - تمت المزامنة');
+    }).catch(e=>{
+      console.error('Firebase set error', e);
+      setSyncIndicator('offline','تعذّر حفظ البيانات في Firebase');
+    });
+  };
+  if(immediate) doWrite(); else fbSyncTimer=setTimeout(doWrite,400);
 }
 
 // Shop logo, embedded as a data URI so the single HTML file stays fully self-contained offline.
@@ -2308,8 +2521,13 @@ function resolveInvoiceListAddProduct(){
 }
 
 function renderInvoicesList(){
-  const q = (document.getElementById('invlist-search').value||'').trim().toLowerCase();
-  let list = [...INVOICES].sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+  const q = (document.getElementById('invlist-search')?.value||'').trim().toLowerCase();
+  const source = Array.isArray(INVOICES) ? INVOICES : firebaseArray(INVOICES);
+  let list = source.map(normalizeInvoiceForList).sort((a,b)=>{
+    const ta = new Date(a.createdAt||`${a.date||''}T${a.time||'00:00'}`).getTime()||0;
+    const tb = new Date(b.createdAt||`${b.date||''}T${b.time||'00:00'}`).getTime()||0;
+    return tb-ta;
+  });
   if(q) list = list.filter(inv=> String(inv.id).includes(q) || (inv.customerName||'').toLowerCase().includes(q));
 
   document.getElementById('invlist-count').textContent = list.length;
@@ -2328,10 +2546,57 @@ function renderInvoicesList(){
       <td>${escapeHtml(inv.customerName)||'-'}</td>
       <td>${inv.items.length}</td>
       <td>${fmtMoney(inv.total)}${inv.fullyReturned?' <span class="badge crit">مسترجعة</span>':''}</td>
-      <td><button class="btn sm secondary" onclick="openInvoiceDetail(${inv.id})">عرض التفاصيل</button></td>
+      <td style="white-space:nowrap;">
+        <button class="btn sm secondary" onclick="openInvoiceDetail(${inv.id})">عرض التفاصيل</button>
+        <button class="btn sm danger invoice-delete-btn" onclick="deleteInvoice(${inv.id})">🗑️ حذف</button>
+      </td>
     </tr>`).join('');
 }
 document.getElementById('invlist-search').addEventListener('input', renderInvoicesList);
+
+/* حذف فاتورة مبيعات كاملة — الرمز السري المطلوب: 0 */
+function deleteInvoice(invoiceId){
+  const inv = INVOICES.find(i=>Number(i.id)===Number(invoiceId));
+  if(!inv){ showToast('لم يتم العثور على الفاتورة','err'); return; }
+
+  const pass = prompt(`لحذف الفاتورة رقم ${inv.id} بالكامل، أدخل الرمز السري:`);
+  if(pass===null) return;
+  if(String(pass).trim() !== '0'){
+    showToast('الرمز السري غير صحيح، لم يتم حذف الفاتورة','err');
+    return;
+  }
+
+  if(!confirm(`هل أنت متأكد من حذف الفاتورة رقم ${inv.id} نهائياً؟\nسيتم حذفها من قائمة الفواتير وإعادة الكميات غير المسترجعة إلى المخزون.`)) return;
+
+  // إعادة الكميات غير المسترجعة إلى المخزون قبل حذف الفاتورة.
+  (inv.items||[]).forEach(it=>{
+    const remaining = Math.max(0, Number(it.qty||0) - Number(it.returnedQty||0));
+    if(it.productId && remaining>0){
+      const p = PRODUCTS.find(x=>x.id===it.productId);
+      if(p){
+        p.qty = (Number(p.qty)||0) + remaining;
+        p.updatedAt = new Date().toISOString();
+      }
+    }
+  });
+
+  // حذف سجلات الاسترجاع المرتبطة بالفاتورة حتى لا تبقى سجلات يتيمة.
+  if(Array.isArray(RETURNS)) RETURNS = RETURNS.filter(r=>Number(r.invoiceId)!==Number(inv.id));
+
+  INVOICES = INVOICES.filter(i=>Number(i.id)!==Number(inv.id));
+  if(invListExpandedId===Number(inv.id)) invListExpandedId=null;
+  invListEditMode=false;
+  invListPendingAddedItems=[];
+  persistAll();
+
+  const detailCard=document.getElementById('invlist-detail-card');
+  if(detailCard) detailCard.style.display='none';
+  renderInvoicesList();
+  renderStock();
+  renderArchiveTable();
+  if(typeof renderReturnsHistory==='function') renderReturnsHistory();
+  showToast(`تم حذف الفاتورة رقم ${inv.id} بنجاح`,'good');
+}
 
 function openInvoiceDetail(id){
   const inv = INVOICES.find(i=>i.id===id);
@@ -3733,6 +3998,7 @@ function refreshAllViews(){
   renderArchiveTable();
   renderStock();
   renderReturnsHistory();
+  if(typeof renderInvoicesList==='function') renderInvoicesList();
   renderRecentPurchases();
   if(typeof refreshPurchaseDatalist==='function') refreshPurchaseDatalist();
   if(typeof refreshMiscDatalist==='function') refreshMiscDatalist();
@@ -3750,6 +4016,7 @@ if(requireLogin()){ showApp(); } else { showLoginOverlay(); }
 
 /* الاتصال بخدمة المزامنة (Firebase) */
 initFirebaseSync();
+setTimeout(()=>{ if(typeof initDebtSync==='function') initDebtSync(); },1200);
 </script>
 
 <!-- ================= NEW FEATURES MERGED: NOTIFICATIONS + DEBTS ================= -->
