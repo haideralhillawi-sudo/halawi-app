@@ -922,6 +922,117 @@ body{display:block !important;overflow-x:hidden;}
         <button type="button" class="btn danger" id="inv-new-btn">🆕 فاتورة جديدة</button>
       </div>
     </div>
+    <!-- ================= إضافة فقط داخل SECTION: INVOICE ================= -->
+    <div class="card" id="daily-sales-invoices-card" style="margin-top:18px;border-top:3px solid var(--brand);">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+        <div>
+          <h3 style="margin:0;border:none;padding:0;">📅 فواتير المبيعات حسب اليوم</h3>
+          <p class="hint" style="margin:5px 0 0 0;">اعرض جميع الفواتير المباعة في اليوم الحالي فقط حسب تاريخ اليوم المفتوح به البرنامج، مع إمكانية التعديل أو الحذف.</p>
+        </div>
+        <div class="badge info" id="daily-sales-current-date">اليوم: -</div>
+      </div>
+
+      <div class="grid grid-3" style="margin-bottom:14px;">
+        <div class="stat-tile">
+          <div class="v" id="daily-sales-invoice-count">0</div>
+          <div class="l">عدد فواتير اليوم</div>
+        </div>
+        <div class="stat-tile">
+          <div class="v" id="daily-sales-total">0</div>
+          <div class="l">إجمالي مبيعات اليوم (د.ع)</div>
+        </div>
+        <div class="stat-tile">
+          <div class="v" id="daily-sales-items-count">0</div>
+          <div class="l">عدد الأصناف المباعة</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>رقم الفاتورة</th>
+              <th>الوقت</th>
+              <th>الزبون</th>
+              <th>عدد الأصناف</th>
+              <th>الإجمالي</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody id="daily-sales-invoices-body"></tbody>
+        </table>
+      </div>
+
+      <div id="daily-sales-editor" class="card" style="display:none;margin:14px 0 0 0;background:var(--brand-bg);border:1px dashed var(--brand);">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+          <h3 id="daily-sales-editor-title" style="margin:0;border:none;padding:0;">✏️ تعديل فاتورة اليوم</h3>
+          <button type="button" class="btn secondary sm" id="daily-sales-editor-close">إغلاق</button>
+        </div>
+
+        <div class="inv-meta" style="margin-bottom:12px;">
+          <div><label style="display:inline;margin-left:6px;">رقم الفاتورة:</label><b id="daily-sales-edit-number">-</b></div>
+          <div><label style="display:inline;margin-left:6px;">التاريخ:</label><b id="daily-sales-edit-date">-</b></div>
+          <div><label style="display:inline;margin-left:6px;">الوقت:</label><b id="daily-sales-edit-time">-</b></div>
+        </div>
+
+        <div class="field" style="max-width:340px;">
+          <label>اسم الزبون</label>
+          <input type="text" id="daily-sales-edit-customer" placeholder="اسم الزبون">
+        </div>
+
+        <div class="card" style="margin:14px 0 0 0;background:#fff;">
+          <h3 style="margin-bottom:10px;">مواد الفاتورة</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>المادة</th>
+                  <th>الكمية</th>
+                  <th>سعر الوحدة</th>
+                  <th>المجموع</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="daily-sales-edit-items-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card" style="margin:14px 0 0 0;background:#fff;">
+          <h3 style="margin-bottom:10px;">➕ إضافة مادة إلى الفاتورة</h3>
+          <div class="grid grid-4" style="align-items:end;">
+            <div class="field" style="grid-column:span 2;">
+              <label>اسم المادة أو الباركود *</label>
+              <input type="text" id="daily-sales-add-search" placeholder="ابحث باسم المادة أو الباركود" autocomplete="off" list="daily-sales-add-datalist">
+              <datalist id="daily-sales-add-datalist"></datalist>
+            </div>
+            <div class="field">
+              <label>الكمية *</label>
+              <input type="number" id="daily-sales-add-qty" min="1" step="1" value="1">
+            </div>
+            <div class="field">
+              <label>سعر الوحدة *</label>
+              <input type="number" id="daily-sales-add-price" min="0" step="1" placeholder="0">
+            </div>
+          </div>
+          <div id="daily-sales-add-preview" class="selected-preview"></div>
+          <div class="btn-row">
+            <button type="button" class="btn" id="daily-sales-add-item-btn">➕ إضافة المادة</button>
+          </div>
+        </div>
+
+        <div style="text-align:left;margin-top:14px;font-size:19px;">
+          <b>إجمالي الفاتورة: <span id="daily-sales-edit-total" style="color:var(--brand-dark);">0</span> د.ع</b>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn good" id="daily-sales-save-edit-btn">💾 حفظ تعديلات الفاتورة</button>
+          <button type="button" class="btn danger" id="daily-sales-delete-invoice-btn">🗑️ حذف الفاتورة</button>
+        </div>
+        <p id="daily-sales-edit-status" class="hint" style="margin-top:8px;"></p>
+      </div>
+    </div>
+
   </section>
 
   <!-- ================= SECTION 2B: INVOICE LIST ================= -->
@@ -5183,7 +5294,7 @@ setTimeout(()=>{ if(typeof initDebtSync==='function') initDebtSync(); },1200);
       originalRenderStock.apply(this,arguments);
       enhanceStockRows();
     };
-  } 
+  }
 
   document.addEventListener('DOMContentLoaded',()=>{
     ensureStockModal();
@@ -5197,6 +5308,545 @@ setTimeout(()=>{ if(typeof initDebtSync==='function') initDebtSync(); },1200);
 
   window.halawiChangeStock=changeStock;
   window.halawiOpenStockEditor=openStockModal;
+})();
+</script>
+
+<script>
+/* =========================================================================
+   DAILY SALES INVOICE VIEW
+   هذه الوحدة مخصصة فقط لقسم "فاتورة مبيعات".
+   لا تغيّر تصميم أو وظائف "قائمة الفواتير".
+   ========================================================================= */
+(function(){
+  'use strict';
+
+  let dailyEditingInvoiceId = null;
+  let dailyEditingItems = [];
+  const DAILY_DELETE_PASSWORD = '0';
+  const DAILY_EDIT_PASSWORD = '0';
+
+  function dailyTodayStr(){
+    if(typeof todayStr === 'function') return todayStr();
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  function dailyEsc(v){
+    if(typeof escapeHtml === 'function') return escapeHtml(String(v ?? ''));
+    return String(v ?? '').replace(/[&<>'"]/g, c => ({
+      '&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'
+    }[c]));
+  }
+
+  function dailyFmtMoney(v){
+    if(typeof fmtMoney === 'function') return fmtMoney(v);
+    return Number(v || 0).toLocaleString('ar-IQ');
+  }
+
+  function dailyInvoiceDate(inv){
+    return String(
+      inv?.date ||
+      (inv?.createdAt ? new Date(inv.createdAt).toISOString().slice(0,10) : '')
+    ).slice(0,10);
+  }
+
+  function dailyInvoiceTime(inv){
+    if(inv?.time) return String(inv.time);
+    if(inv?.createdAt){
+      const d = new Date(inv.createdAt);
+      if(!isNaN(d.getTime())) return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+    return '-';
+  }
+
+  function dailyNormalizeInvoice(inv){
+    const source = (typeof normalizeInvoiceForList === 'function') ? normalizeInvoiceForList(inv) : inv;
+    const copy = {...(source || {})};
+    copy.items = Array.isArray(copy.items) ? copy.items : [];
+    copy.total = copy.items.reduce((s,it)=>{
+      const qty = Math.max(0, Number(it.qty)||0);
+      const returned = Math.max(0, Number(it.returnedQty)||0);
+      const price = Math.max(0, Number(it.price)||0);
+      it.total = Math.max(0, qty-returned) * price;
+      return s + it.total;
+    },0);
+    return copy;
+  }
+
+  function dailyGetTodayInvoices(){
+    const source = Array.isArray(INVOICES)
+      ? INVOICES
+      : (typeof firebaseArray === 'function' ? firebaseArray(INVOICES) : []);
+    const today = dailyTodayStr();
+    return source
+      .map(dailyNormalizeInvoice)
+      .filter(inv => dailyInvoiceDate(inv) === today)
+      .sort((a,b)=>{
+        const ta = new Date(a.createdAt || `${dailyInvoiceDate(a)}T${dailyInvoiceTime(a)}:00`).getTime() || 0;
+        const tb = new Date(b.createdAt || `${dailyInvoiceDate(b)}T${dailyInvoiceTime(b)}:00`).getTime() || 0;
+        return tb-ta;
+      });
+  }
+
+  function dailyRenderDatalist(){
+    const dl = document.getElementById('daily-sales-add-datalist');
+    if(!dl) return;
+    const vals = [];
+    if(Array.isArray(PRODUCTS)){
+      PRODUCTS.forEach(p=>{
+        if(p.name) vals.push(p.name);
+        if(p.barcode) vals.push(p.barcode);
+      });
+    }
+    dl.innerHTML = [...new Set(vals)].map(v=>`<option value="${dailyEsc(v)}"></option>`).join('');
+  }
+
+  function dailyResolveProduct(value){
+    const q = String(value||'').trim().toLowerCase();
+    if(!q || !Array.isArray(PRODUCTS)) return null;
+    return PRODUCTS.find(p =>
+      String(p.id||'').toLowerCase()===q ||
+      String(p.barcode||'').trim().toLowerCase()===q ||
+      String(p.name||'').trim().toLowerCase()===q
+    ) || null;
+  }
+
+  function dailyRefreshAddPreview(){
+    const input = document.getElementById('daily-sales-add-search');
+    const price = document.getElementById('daily-sales-add-price');
+    const preview = document.getElementById('daily-sales-add-preview');
+    if(!input || !preview) return;
+    const p = dailyResolveProduct(input.value);
+    if(p){
+      if(price) price.value = Number(p.sellPrice)||0;
+      preview.innerHTML = `<b>${dailyEsc(p.name)}</b> — المتوفر حالياً: <b>${dailyFmtMoney(p.qty)}</b> — سعر البيع: <b>${dailyFmtMoney(p.sellPrice)}</b> د.ع`;
+      preview.classList.add('show');
+    }else{
+      preview.innerHTML = '';
+      preview.classList.remove('show');
+    }
+  }
+
+  function dailyClearEditor(){
+    dailyEditingInvoiceId = null;
+    dailyEditingItems = [];
+    const ed = document.getElementById('daily-sales-editor');
+    if(ed) ed.style.display = 'none';
+    const status = document.getElementById('daily-sales-edit-status');
+    if(status) status.textContent = '';
+  }
+
+  function dailyRenderEditor(){
+    const inv = Array.isArray(INVOICES)
+      ? INVOICES.find(i=>Number(i.id)===Number(dailyEditingInvoiceId))
+      : null;
+    const body = document.getElementById('daily-sales-edit-items-body');
+    if(!body || !inv) return;
+
+    const items = Array.isArray(dailyEditingItems) ? dailyEditingItems : [];
+    if(items.length===0){
+      body.innerHTML = `<tr class="empty-row"><td colspan="5">لا توجد مواد في الفاتورة</td></tr>`;
+    }else{
+      body.innerHTML = items.map((it,idx)=>{
+        const qty = Number(it.qty)||0;
+        const price = Number(it.price)||0;
+        const returned = Number(it.returnedQty)||0;
+        const minQty = Math.max(1, returned);
+        const effective = Math.max(0, qty-returned);
+        return `
+          <tr>
+            <td>${dailyEsc(it.name||'')}</td>
+            <td><input type="number" min="${minQty}" step="1" value="${qty}" data-daily-qty="${idx}" style="width:80px;padding:5px;"></td>
+            <td><input type="number" min="0" step="1" value="${price}" data-daily-price="${idx}" style="width:100px;padding:5px;"></td>
+            <td>${dailyFmtMoney(effective*price)}</td>
+            <td><button type="button" class="btn sm danger" onclick="window.dailySalesDeleteEditorItem(${idx})">حذف</button></td>
+          </tr>`;
+      }).join('');
+    }
+
+    const total = items.reduce((s,it)=>{
+      const qty = Number(it.qty)||0;
+      const returned = Number(it.returnedQty)||0;
+      const price = Number(it.price)||0;
+      return s + Math.max(0, qty-returned)*price;
+    },0);
+    const totalEl = document.getElementById('daily-sales-edit-total');
+    if(totalEl) totalEl.textContent = dailyFmtMoney(total);
+  }
+
+  window.dailySalesDeleteEditorItem = function(idx){
+    if(dailyEditingInvoiceId===null) return;
+    if(!Array.isArray(dailyEditingItems) || !dailyEditingItems[idx]) return;
+
+    const item = dailyEditingItems[idx];
+    const pass = prompt(`لحذف المادة "${item.name}" من فاتورة اليوم، أدخل الرمز السري:`);
+    if(pass===null) return;
+    if(String(pass).trim()!==DAILY_EDIT_PASSWORD){
+      showToast('الرمز السري غير صحيح، لم يتم حذف المادة','err');
+      return;
+    }
+    if(!confirm(`هل تريد حذف المادة "${item.name}" من الفاتورة؟`)) return;
+
+    // لا نغيّر المخزون أثناء التعديل المؤقت.
+    // سيتم احتساب فرق الكميات وتطبيقه مرة واحدة عند الضغط على "حفظ".
+    dailyEditingItems.splice(idx,1);
+    dailyRenderEditor();
+    renderStock();
+    renderArchiveTable();
+  };
+
+  function dailyOpenEditor(id){
+    const inv = Array.isArray(INVOICES)
+      ? INVOICES.find(i=>Number(i.id)===Number(id))
+      : null;
+    if(!inv) return;
+
+    if(dailyInvoiceDate(inv)!==dailyTodayStr()){
+      showToast('لا يمكن تعديل إلا فواتير اليوم الحالي','err');
+      return;
+    }
+
+    const pass = prompt('لتعديل فاتورة اليوم أدخل الرمز السري:');
+    if(pass===null) return;
+    if(String(pass).trim()!==DAILY_EDIT_PASSWORD){
+      showToast('الرمز السري غير صحيح، لم يتم فتح التعديل','err');
+      return;
+    }
+
+    dailyEditingInvoiceId = Number(inv.id);
+    dailyEditingItems = (inv.items||[]).map((it,idx)=>({...it,__dailyOriginalIndex:idx}));
+    document.getElementById('daily-sales-edit-number').textContent = inv.id;
+    document.getElementById('daily-sales-edit-date').textContent = inv.dateDisplay || inv.date || dailyTodayStr();
+    document.getElementById('daily-sales-edit-time').textContent = dailyInvoiceTime(inv);
+    document.getElementById('daily-sales-edit-customer').value = inv.customerName || '';
+    document.getElementById('daily-sales-add-search').value = '';
+    document.getElementById('daily-sales-add-qty').value = 1;
+    document.getElementById('daily-sales-add-price').value = '';
+    document.getElementById('daily-sales-add-preview').innerHTML = '';
+    document.getElementById('daily-sales-add-preview').classList.remove('show');
+    document.getElementById('daily-sales-editor').style.display = '';
+    dailyRenderEditor();
+    document.getElementById('daily-sales-editor').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+
+  function dailyAddItem(){
+    if(dailyEditingInvoiceId===null) return;
+    const inv = Array.isArray(INVOICES)
+      ? INVOICES.find(i=>Number(i.id)===Number(dailyEditingInvoiceId))
+      : null;
+    if(!inv) return;
+
+    const nameOrBarcode = (document.getElementById('daily-sales-add-search').value||'').trim();
+    const qty = parseInt(document.getElementById('daily-sales-add-qty').value,10);
+    const price = Number(document.getElementById('daily-sales-add-price').value);
+    if(!nameOrBarcode){ showToast('الرجاء اختيار أو كتابة اسم المادة / الباركود','err'); return; }
+    if(!Number.isFinite(qty) || qty<=0){ showToast('الرجاء إدخال كمية صحيحة','err'); return; }
+    if(!Number.isFinite(price) || price<0){ showToast('الرجاء إدخال سعر صحيح','err'); return; }
+
+    const p = dailyResolveProduct(nameOrBarcode);
+    if(p && (Number(p.qty)||0) < qty){
+      showToast(`الكمية المتوفرة من "${p.name}" هي ${p.qty} فقط`,'err');
+      return;
+    }
+
+    const item = {
+      productId: p ? p.id : null,
+      barcode: p ? (p.barcode||'') : '',
+      name: p ? p.name : nameOrBarcode,
+      category: p && typeof getCategory==='function' ? getCategory(p) : (p?.category||'أخرى'),
+      qty,
+      price,
+      cost: p ? Number(p.buyPrice)||0 : 0,
+      returnedQty: 0,
+      total: qty*price
+    };
+
+    // المادة الجديدة تُسجّل مؤقتاً في محرر الفاتورة فقط.
+    // خصم المخزون سيتم مرة واحدة عند حفظ التعديلات.
+    dailyEditingItems.push(item);
+    document.getElementById('daily-sales-add-search').value = '';
+    document.getElementById('daily-sales-add-qty').value = 1;
+    document.getElementById('daily-sales-add-price').value = '';
+    document.getElementById('daily-sales-add-preview').innerHTML = '';
+    document.getElementById('daily-sales-add-preview').classList.remove('show');
+    dailyRenderEditor();
+    renderStock();
+    renderArchiveTable();
+    showToast('تمت إضافة المادة إلى فاتورة اليوم، احفظ التعديلات لتثبيتها','good');
+  }
+
+  function dailySaveEdit(){
+    if(dailyEditingInvoiceId===null) return;
+    const inv = Array.isArray(INVOICES)
+      ? INVOICES.find(i=>Number(i.id)===Number(dailyEditingInvoiceId))
+      : null;
+    if(!inv) return;
+
+    const originalItems = Array.isArray(inv.items) ? inv.items : [];
+    const draftItems = Array.isArray(dailyEditingItems) ? dailyEditingItems : [];
+
+    // تجهيز تغييرات المخزون دون تطبيقها أولاً.
+    // الموجب = زيادة مخزون، السالب = خصم مخزون.
+    const stockDelta = new Map();
+
+    function addStockDelta(productId, delta){
+      if(!productId || !delta) return;
+      stockDelta.set(productId, (stockDelta.get(productId)||0) + delta);
+    }
+
+    // تعديل كميات البنود القديمة.
+    draftItems.forEach(it=>{
+      if(it.__dailyOriginalIndex===undefined) return;
+      const old = originalItems[it.__dailyOriginalIndex];
+      if(!old) return;
+
+      const oldQty = Number(old.qty)||0;
+      const returned = Number(old.returnedQty)||0;
+      const newQty = Math.max(returned, Number(it.qty)||0);
+
+      addStockDelta(it.productId, oldQty-newQty);
+    });
+
+    // حذف البنود القديمة.
+    originalItems.forEach((old,idx)=>{
+      const stillExists = draftItems.some(it=>it.__dailyOriginalIndex===idx);
+      if(stillExists) return;
+
+      const remaining = Math.max(0,(Number(old.qty)||0)-(Number(old.returnedQty)||0));
+      addStockDelta(old.productId, remaining);
+    });
+
+    // البنود الجديدة.
+    draftItems.forEach(it=>{
+      if(it.__dailyOriginalIndex!==undefined) return;
+      addStockDelta(it.productId, -(Number(it.qty)||0));
+    });
+
+    // التحقق من المخزون قبل تنفيذ أي تغيير.
+    for(const [productId, delta] of stockDelta.entries()){
+      const product = Array.isArray(PRODUCTS) ? PRODUCTS.find(x=>x.id===productId) : null;
+      if(!product) continue;
+      const nextQty = (Number(product.qty)||0) + delta;
+      if(nextQty < 0){
+        throw new Error(`الكمية المتوفرة من "${product.name}" غير كافية لحفظ التعديل.`);
+      }
+    }
+
+    // تطبيق تغييرات المخزون دفعة واحدة.
+    for(const [productId, delta] of stockDelta.entries()){
+      const product = Array.isArray(PRODUCTS) ? PRODUCTS.find(x=>x.id===productId) : null;
+      if(!product || !delta) continue;
+      product.qty = Math.max(0,(Number(product.qty)||0)+delta);
+      product.updatedAt = new Date().toISOString();
+    }
+
+    // تحديث البنود القديمة.
+    draftItems.forEach(it=>{
+      if(it.__dailyOriginalIndex===undefined) return;
+      const old = originalItems[it.__dailyOriginalIndex];
+      if(!old) return;
+
+      const newQty = Math.max(Number(old.returnedQty)||0, Number(it.qty)||0);
+      old.qty = newQty;
+      old.price = Math.max(0,Number(it.price)||0);
+      old.total = Math.max(0,newQty-(Number(old.returnedQty)||0))*old.price;
+    });
+
+    // إبقاء البنود القديمة الموجودة فقط.
+    inv.items = originalItems.filter((_,idx)=>
+      draftItems.some(it=>it.__dailyOriginalIndex===idx)
+    );
+
+    // إضافة البنود الجديدة.
+    draftItems
+      .filter(it=>it.__dailyOriginalIndex===undefined)
+      .forEach(it=>{
+        const clean = {...it};
+        delete clean.__dailyOriginalIndex;
+        clean.qty = Number(clean.qty)||0;
+        clean.price = Number(clean.price)||0;
+        clean.returnedQty = Number(clean.returnedQty)||0;
+        clean.total = Math.max(0,clean.qty-clean.returnedQty)*clean.price;
+        inv.items.push(clean);
+      });
+
+    // إعادة الحساب الكلي.
+    inv.total = inv.items.reduce((s,it)=>{
+      const qty = Number(it.qty)||0;
+      const returned = Number(it.returnedQty)||0;
+      const price = Number(it.price)||0;
+      it.total = Math.max(0,qty-returned)*price;
+      return s+it.total;
+    },0);
+
+    inv.fullyReturned = inv.items.length>0 &&
+      inv.items.every(it=>Math.max(0,(Number(it.qty)||0)-(Number(it.returnedQty)||0))<=0);
+
+    inv.customerName = (document.getElementById('daily-sales-edit-customer').value||'').trim();
+    inv.updatedAt = new Date().toISOString();
+
+    if(typeof persistAll==='function') persistAll();
+
+    dailyEditingItems = [];
+    dailyEditingInvoiceId = null;
+    dailyClearEditor();
+
+    renderDailySalesInvoices();
+    renderStock();
+    renderArchiveTable();
+    if(typeof renderInvoicesList==='function') renderInvoicesList();
+
+    showToast(`تم حفظ تعديل الفاتورة رقم ${inv.id}`,'good');
+  }
+
+  function dailyDeleteInvoice(id){
+    const inv = Array.isArray(INVOICES)
+      ? INVOICES.find(i=>Number(i.id)===Number(id))
+      : null;
+    if(!inv) return;
+
+    if(dailyInvoiceDate(inv)!==dailyTodayStr()){
+      showToast('لا يمكن حذف إلا فواتير اليوم الحالي','err');
+      return;
+    }
+
+    const pass = prompt('لحذف فاتورة اليوم أدخل الرمز السري:');
+    if(pass===null) return;
+    if(String(pass).trim()!==DAILY_DELETE_PASSWORD){
+      showToast('الرمز السري غير صحيح، لم يتم حذف الفاتورة','err');
+      return;
+    }
+
+    if(!confirm(`هل أنت متأكد من حذف الفاتورة رقم ${inv.id} نهائياً؟\nسيتم إعادة الكميات غير المسترجعة إلى المخزون.`)) return;
+
+    (inv.items||[]).forEach(it=>{
+      const remaining = Math.max(0,(Number(it.qty)||0)-(Number(it.returnedQty)||0));
+      if(it.productId && remaining>0){
+        const p = PRODUCTS.find(x=>x.id===it.productId);
+        if(p){
+          p.qty = (Number(p.qty)||0)+remaining;
+          p.updatedAt = new Date().toISOString();
+        }
+      }
+    });
+
+    if(Array.isArray(RETURNS)){
+      RETURNS = RETURNS.filter(r=>Number(r.invoiceId)!==Number(inv.id));
+    }
+    INVOICES = INVOICES.filter(i=>Number(i.id)!==Number(inv.id));
+
+    dailyEditingInvoiceId = null;
+    dailyEditingItems = [];
+    if(typeof persistAll==='function') persistAll();
+
+    renderDailySalesInvoices();
+    renderStock();
+    renderArchiveTable();
+    if(typeof renderInvoicesList==='function') renderInvoicesList();
+    if(typeof renderReturnsHistory==='function') renderReturnsHistory();
+
+    showToast(`تم حذف الفاتورة رقم ${inv.id} بنجاح`,'good');
+  }
+
+  function renderDailySalesInvoices(){
+    const body = document.getElementById('daily-sales-invoices-body');
+    if(!body) return;
+
+    const list = dailyGetTodayInvoices();
+    const today = dailyTodayStr();
+
+    const dateEl = document.getElementById('daily-sales-current-date');
+    if(dateEl){
+      const d = new Date(today+'T00:00:00');
+      dateEl.textContent = `اليوم: ${isNaN(d.getTime()) ? today : d.toLocaleDateString('ar-IQ')}`;
+    }
+
+    const countEl = document.getElementById('daily-sales-invoice-count');
+    const totalEl = document.getElementById('daily-sales-total');
+    const itemsEl = document.getElementById('daily-sales-items-count');
+    if(countEl) countEl.textContent = list.length;
+    if(totalEl) totalEl.textContent = dailyFmtMoney(list.reduce((s,inv)=>s+(Number(inv.total)||0),0));
+    if(itemsEl) itemsEl.textContent = list.reduce((s,inv)=>s+(Array.isArray(inv.items)?inv.items.length:0),0);
+
+    if(list.length===0){
+      body.innerHTML = `<tr class="empty-row"><td colspan="6">لا توجد فواتير مبيعات مسجلة لليوم الحالي (${today})</td></tr>`;
+      return;
+    }
+
+    body.innerHTML = list.map(inv=>`
+      <tr>
+        <td><b>${dailyEsc(inv.id)}</b></td>
+        <td>${dailyEsc(dailyInvoiceTime(inv))}</td>
+        <td>${dailyEsc(inv.customerName || '-')}</td>
+        <td>${Array.isArray(inv.items)?inv.items.length:0}</td>
+        <td>${dailyFmtMoney(inv.total)}${inv.fullyReturned?' <span class="badge crit">مسترجعة</span>':''}</td>
+        <td style="white-space:nowrap;">
+          <button type="button" class="btn sm secondary" onclick="window.dailySalesOpenEditor(${Number(inv.id)})">✏️ تعديل</button>
+          <button type="button" class="btn sm danger" onclick="window.dailySalesDeleteInvoice(${Number(inv.id)})">🗑️ حذف</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  window.dailySalesOpenEditor = dailyOpenEditor;
+  window.dailySalesDeleteInvoice = dailyDeleteInvoice;
+  window.renderDailySalesInvoices = renderDailySalesInvoices;
+
+  // ربط الأحداث للقسم الجديد فقط.
+  document.addEventListener('DOMContentLoaded', function(){
+    dailyRenderDatalist();
+
+    const navInvoice = document.querySelector('.nav-btn[data-sec="sec-invoice"]');
+    if(navInvoice){
+      navInvoice.addEventListener('click', ()=>{
+        setTimeout(renderDailySalesInvoices, 0);
+      });
+    }
+
+    const addSearch = document.getElementById('daily-sales-add-search');
+    if(addSearch) addSearch.addEventListener('input', dailyRefreshAddPreview);
+
+    const addBtn = document.getElementById('daily-sales-add-item-btn');
+    if(addBtn) addBtn.addEventListener('click', dailyAddItem);
+
+    const closeBtn = document.getElementById('daily-sales-editor-close');
+    if(closeBtn) closeBtn.addEventListener('click', dailyClearEditor);
+
+    const saveBtn = document.getElementById('daily-sales-save-edit-btn');
+    if(saveBtn) saveBtn.addEventListener('click', ()=>{
+      try{
+        dailySaveEdit();
+      }catch(e){
+        console.error(e);
+        showToast(e.message || 'حدث خطأ أثناء حفظ التعديل','err');
+      }
+    });
+
+    const deleteBtn = document.getElementById('daily-sales-delete-invoice-btn');
+    if(deleteBtn) deleteBtn.addEventListener('click', ()=>{
+      if(dailyEditingInvoiceId!==null) dailyDeleteInvoice(dailyEditingInvoiceId);
+    });
+
+
+  // بعد حفظ/إنشاء فاتورة جديدة من قسم "فاتورة مبيعات" نحدّث قائمة فواتير اليوم.
+  document.addEventListener('click', function(ev){
+    const id = ev.target && ev.target.id;
+    if(id==='inv-save-btn' || id==='inv-new-btn'){
+      setTimeout(renderDailySalesInvoices, 250);
+    }
+  });
+
+    // تحديث تلقائي خفيف حتى تظهر فواتير Firebase التي تصل بعد فتح الصفحة.
+    setTimeout(renderDailySalesInvoices, 300);
+    setInterval(()=>{
+      const sec = document.getElementById('sec-invoice');
+      if(sec && sec.classList.contains('active')){
+        dailyRenderDatalist();
+        renderDailySalesInvoices();
+      }
+    }, 2500);
+  });
+
 })();
 </script>
 
