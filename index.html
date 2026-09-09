@@ -582,6 +582,204 @@ body{display:block !important;overflow-x:hidden;}
   #topbar{margin:-14px -10px 14px !important;padding:8px 12px !important;}
 }
 </style>
+
+<style id="halawi-home-navigation-v3">
+  /* ===== الشاشة الرئيسية: قوائم كبيرة بدون محتوى ===== */
+  #sidebar{display:none !important;}
+  #main{
+    width:100% !important;
+    min-width:0 !important;
+    padding:20px 26px 35px !important;
+  }
+  #home-screen{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(220px,1fr));
+    gap:18px;
+    margin-top:6px;
+  }
+  .home-menu-card{
+    min-height:155px;
+    border:1px solid rgba(42,120,214,.16);
+    border-radius:18px;
+    background:linear-gradient(145deg,#ffffff,#eef4fc);
+    color:var(--brand-dark);
+    box-shadow:0 8px 24px rgba(24,79,149,.10), inset 0 1px 0 rgba(255,255,255,.8);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:11px;
+    padding:22px 16px;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:18px;
+    font-weight:900;
+    transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease;
+    text-align:center;
+  }
+  .home-menu-card .home-ic{
+    font-size:42px;
+    line-height:1;
+  }
+  .home-menu-card:hover{
+    transform:translateY(-5px);
+    border-color:rgba(42,120,214,.35);
+    background:linear-gradient(145deg,#fff,#e7f0fd);
+    box-shadow:0 16px 32px rgba(24,79,149,.16);
+  }
+  .home-menu-card:active{transform:translateY(-1px) scale(.99);}
+  .home-menu-sub{font-size:11.5px;color:var(--ink-2);font-weight:600;}
+  #home-screen.hidden{display:none !important;}
+  #home-title{
+    margin:0 0 5px;
+    font-size:26px;
+    color:var(--brand-dark);
+    text-align:center;
+  }
+  #home-subtitle{
+    margin:0 0 20px;
+    text-align:center;
+    color:var(--ink-2);
+    font-size:13px;
+  }
+  #home-btn{
+    display:none;
+    margin-left:8px;
+    white-space:nowrap;
+  }
+  #topbar.section-mode #home-btn{display:inline-flex;}
+  #topbar .topbar-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  #topbar-user-name{font-size:12px;color:var(--ink-2);font-weight:bold;white-space:nowrap;}
+  #topbar-logout-btn{display:none;}
+  .invoice-time-wrap{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  #inv-time-input{width:125px !important;padding:5px 8px !important;}
+  .invoice-time-hint{
+    display:block;
+    font-size:11px;
+    color:var(--muted);
+    margin-top:4px;
+  }
+  @media(max-width:1050px){
+    #home-screen{grid-template-columns:repeat(2,minmax(220px,1fr));}
+  }
+  @media(max-width:650px){
+    #main{padding:14px 10px 30px !important;}
+    #topbar{margin:-14px -10px 14px !important;padding:8px 12px !important;}
+    #home-screen{grid-template-columns:1fr 1fr;gap:10px;}
+    .home-menu-card{min-height:125px;font-size:15px;padding:16px 10px;border-radius:14px;}
+    .home-menu-card .home-ic{font-size:34px;}
+    #home-title{font-size:21px;}
+    #home-subtitle{font-size:12px;margin-bottom:14px;}
+    #home-btn{font-size:12px;padding:7px 10px;}
+  }
+  @media(max-width:430px){
+    #home-screen{grid-template-columns:1fr;}
+  }
+/* ===== ألوان مستقلة للقوائم الرئيسية + لمعة وفقاعة ===== */
+.home-menu-card{
+  position:relative !important;
+  overflow:hidden !important;
+  isolation:isolate;
+  color:#fff !important;
+  border:1px solid rgba(255,255,255,.28) !important;
+  background:var(--menu-bg) !important;
+  box-shadow:0 10px 24px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.24) !important;
+  transition:transform .22s ease,box-shadow .22s ease,filter .22s ease,border-color .22s ease !important;
+}
+.home-menu-card .home-ic,.home-menu-card>span:not(.home-ic){position:relative;z-index:4;}
+.home-menu-card .home-menu-sub{color:rgba(255,255,255,.88) !important;}
+.home-menu-card::before{
+  content:"";
+  position:absolute;
+  width:42px;height:42px;
+  right:10%;bottom:10px;
+  border-radius:50%;
+  background:rgba(255,255,255,.24);
+  opacity:0;
+  transform:scale(.15);
+  box-shadow:0 0 0 0 rgba(255,255,255,.18);
+  transition:opacity .18s ease,transform .42s ease,box-shadow .48s ease;
+  z-index:1;
+  pointer-events:none;
+}
+.home-menu-card::after{
+  content:"";
+  position:absolute;
+  top:-15%;left:-80%;
+  width:38%;height:130%;
+  transform:skewX(-24deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.78),transparent);
+  opacity:0;
+  z-index:3;
+  pointer-events:none;
+}
+.home-menu-card:hover::before{
+  opacity:.95;
+  transform:scale(4.8);
+  box-shadow:0 0 0 18px rgba(255,255,255,.05),0 0 34px 10px rgba(255,255,255,.16);
+}
+.home-menu-card:hover::after{
+  opacity:1;
+  animation:homeMenuShine .7s ease forwards;
+}
+@keyframes homeMenuShine{
+  from{left:-80%;}
+  to{left:145%;}
+}
+.home-menu-card:hover{
+  transform:translateY(-7px) scale(1.025) !important;
+  filter:saturate(1.12) brightness(1.04);
+  border-color:rgba(255,255,255,.52) !important;
+  box-shadow:0 18px 36px rgba(0,0,0,.22),0 0 0 4px rgba(255,255,255,.06),inset 0 1px 0 rgba(255,255,255,.28) !important;
+}
+.home-menu-card:active{transform:translateY(-2px) scale(.99) !important;}
+/* ألوان مختلفة لكل قائمة */
+.home-menu-card[data-sec="sec-archive"]{--menu-bg:linear-gradient(145deg,#1687ff,#0757c9);}
+.home-menu-card[data-sec="sec-purchases"]{--menu-bg:linear-gradient(145deg,#12b886,#087f5b);}
+.home-menu-card[data-sec="sec-invoice"]{--menu-bg:linear-gradient(145deg,#7c4dff,#512da8);}
+.home-menu-card[data-sec="sec-invoicelist"]{--menu-bg:linear-gradient(145deg,#00a8cc,#0077b6);}
+.home-menu-card[data-sec="sec-debts"]{--menu-bg:linear-gradient(145deg,#f08c00,#c95b00);}
+.home-menu-card[data-sec="sec-stock"]{--menu-bg:linear-gradient(145deg,#20c997,#0b8f6a);}
+.home-menu-card[data-sec="sec-returns"]{--menu-bg:linear-gradient(145deg,#e64980,#b51754);}
+.home-menu-card[data-sec="sec-reports"]{--menu-bg:linear-gradient(145deg,#6c63ff,#4338ca);}
+.home-menu-card[data-sec="sec-backup"]{--menu-bg:linear-gradient(145deg,#495057,#212529);}
+@media(max-width:650px){
+  .home-menu-card{min-height:130px !important;}
+}
+</style>
+
+<style id="halawi-home-menu-colors-final">
+.home-menu-card{position:relative !important;overflow:hidden !important;isolation:isolate;color:#fff !important;background:var(--menu-bg) !important;border:1px solid rgba(255,255,255,.30) !important;box-shadow:0 12px 28px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.25) !important;transition:transform .22s ease,box-shadow .22s ease,filter .22s ease,border-color .22s ease !important;}
+.home-menu-card .home-ic,.home-menu-card>span:not(.home-ic){position:relative;z-index:5;}
+.home-menu-card .home-menu-sub{color:rgba(255,255,255,.90) !important;}
+/* الفقاعة واللمعة لا تعملان إلا على المستطيل الذي عليه المؤشر */
+.home-menu-card::before{content:"";position:absolute;width:22px;height:22px;right:12%;bottom:10px;border-radius:50%;background:rgba(255,255,255,.24);opacity:0;transform:scale(.15);box-shadow:0 0 0 0 rgba(255,255,255,.20);transition:opacity .16s ease,transform .42s ease,box-shadow .48s ease;pointer-events:none;z-index:1;}
+.home-menu-card::after{content:"";position:absolute;top:-15%;left:-85%;width:34%;height:130%;transform:skewX(-24deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.82),transparent);opacity:0;pointer-events:none;z-index:4;}
+.home-menu-card:hover::before{opacity:1;transform:scale(5.2);box-shadow:0 0 0 16px rgba(255,255,255,.06),0 0 30px 8px rgba(255,255,255,.17);}
+.home-menu-card:hover::after{opacity:1;animation:halawiHomeShine .72s ease forwards;}
+@keyframes halawiHomeShine{from{left:-85%;}to{left:150%;}}
+.home-menu-card:hover{transform:translateY(-7px) scale(1.025) !important;filter:saturate(1.13) brightness(1.05);border-color:rgba(255,255,255,.62) !important;box-shadow:0 20px 40px rgba(0,0,0,.24),0 0 0 4px rgba(255,255,255,.055),inset 0 1px 0 rgba(255,255,255,.32) !important;}
+.home-menu-card:active{transform:translateY(-2px) scale(.99) !important;}
+.home-menu-card[data-sec="sec-archive"]{--menu-bg:linear-gradient(145deg,#1687ff 0%,#0757c9 100%);}
+.home-menu-card[data-sec="sec-purchases"]{--menu-bg:linear-gradient(145deg,#12b886 0%,#087f5b 100%);}
+.home-menu-card[data-sec="sec-invoice"]{--menu-bg:linear-gradient(145deg,#8b5cf6 0%,#5b21b6 100%);}
+.home-menu-card[data-sec="sec-invoicelist"]{--menu-bg:linear-gradient(145deg,#06b6d4 0%,#0369a1 100%);}
+.home-menu-card[data-sec="sec-debts"]{--menu-bg:linear-gradient(145deg,#f59e0b 0%,#c2410c 100%);}
+.home-menu-card[data-sec="sec-stock"]{--menu-bg:linear-gradient(145deg,#10b981 0%,#047857 100%);}
+.home-menu-card[data-sec="sec-returns"]{--menu-bg:linear-gradient(145deg,#ec4899 0%,#be185d 100%);}
+.home-menu-card[data-sec="sec-reports"]{--menu-bg:linear-gradient(145deg,#6366f1 0%,#3730a3 100%);}
+.home-menu-card[data-sec="sec-backup"]{--menu-bg:linear-gradient(145deg,#64748b 0%,#334155 100%);}
+#bk-auto-folder-status{font-size:12px;line-height:1.8;}
+#bk-auto-folder-status.ok{border-color:var(--good);background:#ecfdf5;}
+#bk-auto-folder-status.warn{border-color:var(--warning);background:#fffbeb;}
+#bk-auto-folder-status.err{border-color:var(--critical);background:#fef2f2;}
+</style>
+
 </head>
 <body>
 
@@ -612,7 +810,7 @@ body{display:block !important;overflow-x:hidden;}
     <div><button class="logout-btn" id="logout-btn">تسجيل خروج</button></div>
   </div>
   <button class="nav-btn" data-sec="sec-archive"><span class="ic">📥</span> أرشفة المواد</button>
-  <button class="nav-btn" data-sec="sec-purchases"><span class="ic">🦷</span> مسواك المكتبة</button>
+  <button class="nav-btn" data-sec="sec-purchases"><span class="ic">🛒</span> مسواك المكتبة</button>
   <button class="nav-btn" data-sec="sec-invoice"><span class="ic">🧾</span> فاتورة مبيعات</button>
   <button class="nav-btn" data-sec="sec-invoicelist"><span class="ic">📋</span> قائمة الفواتير</button>
   <button class="nav-btn" data-sec="sec-debts"><span class="ic">💳</span> قائمة الديون</button>
@@ -627,13 +825,25 @@ body{display:block !important;overflow-x:hidden;}
 
   <div id="topbar">
     <div style="font-weight:bold;color:var(--brand-dark);">مرحباً بك في نظام الإدارة</div>
-    <div id="notif-bell">
+    <div class="topbar-actions">
+      <span id="topbar-user-name"></span>
+      <button type="button" class="btn secondary sm" id="home-btn">🏠 القائمة الرئيسية</button>
+      <button type="button" class="btn secondary sm" id="topbar-logout-btn">🚪 خروج</button>
+      <div id="notif-bell">
       <span style="font-size:20px;">🔔</span>
       <span id="notif-badge">0</span>
       <div id="notif-dropdown">
         <h4 style="margin:0 0 10px 0;border-bottom:1px solid var(--grid);padding-bottom:5px;">مواد قاربت على النفاذ (&lt; 10)</h4>
         <div id="notif-list" style="font-size:13px;color:var(--ink-2);"></div>
       </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="home-screen">
+    <div style="grid-column:1/-1;">
+      <h1 id="home-title">القائمة الرئيسية</h1>
+      <p id="home-subtitle">اختر إحدى القوائم لعرض محتواها</p>
     </div>
   </div>
 
@@ -840,7 +1050,12 @@ body{display:block !important;overflow-x:hidden;}
       <div class="inv-meta">
         <div><label style="display:inline;margin-left:6px;">رقم الفاتورة:</label><b id="inv-number">-</b></div>
         <div><label style="display:inline;margin-left:6px;">التاريخ:</label><input type="date" id="inv-date-input" style="display:inline-block;width:auto;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-family:inherit;"></div>
-        <div><label style="display:inline;margin-left:6px;">الوقت:</label><b id="inv-time">-</b></div>
+        <div class="invoice-time-wrap">
+          <label style="display:inline;margin-left:6px;">وقت الفاتورة:</label>
+          <input type="time" id="inv-time-input" aria-label="وقت الفاتورة (اختياري)">
+          <b id="inv-time">-</b>
+          <small class="invoice-time-hint">اختياري: اتركه فارغاً لاستخدام الوقت الحالي</small>
+        </div>
       </div>
       <div class="field" style="max-width:340px;">
         <label>اسم الزبون (اختياري)</label>
@@ -1431,7 +1646,7 @@ body{display:block !important;overflow-x:hidden;}
   <!-- ================= SECTION 6: BACKUP / RESTORE ================= -->
   <section class="section" id="sec-backup">
     <h2 class="page-title">💾 النسخ الاحتياطي والاستعادة</h2>
-    <p class="page-sub">جميع بيانات البرنامج محفوظة داخل هذا المتصفح فقط على هذا الجهاز. لحفظها على هارد الجهاز، أو نقلها/عرضها على جهاز آخر، أو استرجاعها بعد فقدانها — استخدم التصدير والاستيراد أدناه.</p>
+    <p class="page-sub">جميع بيانات البرنامج محفوظة داخل هذا المتصفح على هذا الجهاز. يمكنك اختيار مجلد من محرك D أو E أو F ليحفظ البرنامج نسخة محدثة تلقائياً كل 30 دقيقة، مع بقاء التصدير والاستيراد اليدويين متاحين.</p>
 
     <div class="card" id="backup-warning-card" style="display:none;background:#fdf0da;border-color:#c98500;">
       <b>⚠️ تنبيه:</b> <span id="backup-warning-text"></span>
@@ -1448,6 +1663,10 @@ body{display:block !important;overflow-x:hidden;}
       </div>
       <div class="btn-row">
         <button type="button" class="btn good" id="bk-export-btn">⬇️ تنزيل نسخة احتياطية الآن</button>
+        <button type="button" class="btn secondary" id="bk-auto-folder-btn" title="اختر مجلداً من D أو E أو F">📁 اختيار مجلد الحفظ التلقائي</button>
+      </div>
+      <div class="selected-preview" id="bk-auto-folder-status" style="display:block;margin-top:12px;">
+        <b>💾 الحفظ التلقائي:</b> غير مفعّل — اضغط الزر واختر المجلد الذي تريد الحفظ فيه من القرص D أو E أو F، وسيتم تحديث النسخة تلقائياً كل 30 دقيقة.
       </div>
     </div>
 
@@ -1506,6 +1725,25 @@ var zbarWasm=function(A){"use strict";function I(A,I,g,B){return new(g||(g=Promi
 
 </script>
 
+
+<script id="halawi-auto-backup-v1">
+(function(){
+  'use strict';
+  const DB_NAME='halawi_auto_backup_db', STORE='handles', KEY='backupFolder', INTERVAL=30*60*1000;
+  let folderHandle=null;
+  function status(html,type){const el=document.getElementById('bk-auto-folder-status');if(!el)return;el.className='selected-preview'+(type?' '+type:'');el.style.display='block';el.innerHTML=html;}
+  function openDb(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains(STORE))db.createObjectStore(STORE);};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+  async function saveHandle(h){try{const db=await openDb();await new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(h,KEY);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);});db.close();}catch(e){console.warn(e);}}
+  async function loadHandle(){try{const db=await openDb();const h=await new Promise((res,rej)=>{const tx=db.transaction(STORE,'readonly');const r=tx.objectStore(STORE).get(KEY);r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error);});db.close();return h;}catch(e){return null;}}
+  function buildData(){return {meta:{app:'مكتبة الحلاوي - نظام الأرشفة والمبيعات',exportedAt:new Date().toISOString(),version:1,automatic:true},products:typeof PRODUCTS!=='undefined'?PRODUCTS:[],invoices:typeof INVOICES!=='undefined'?INVOICES:[],returns:typeof RETURNS!=='undefined'?RETURNS:[],purchases:typeof PURCHASES!=='undefined'?PURCHASES:[],dailyIncome:typeof DAILY_INCOME!=='undefined'?DAILY_INCOME:[],debts:typeof DEBTS!=='undefined'?DEBTS:[],counter:typeof COUNTER!=='undefined'?COUNTER:{invoice:1000}};}
+  async function permission(h,ask){if(!h?.queryPermission)return false;let p=await h.queryPermission({mode:'readwrite'});if(p==='granted')return true;if(ask&&h.requestPermission){p=await h.requestPermission({mode:'readwrite'});return p==='granted';}return false;}
+  async function writeBackup(ask){if(!folderHandle)folderHandle=await loadHandle();if(!folderHandle)return false;if(!await permission(folderHandle,ask)){status('⚠️ تم حفظ اختيار المجلد، لكن المتصفح يحتاج إذن الكتابة. اضغط «اختيار مجلد الحفظ التلقائي» مرة أخرى.','warn');return false;}try{const f=await folderHandle.getFileHandle('halawi-auto-backup.json',{create:true});const w=await f.createWritable();await w.write(JSON.stringify(buildData(),null,2));await w.close();const now=new Date();if(typeof setLastBackupAt==='function')setLastBackupAt(now.toISOString());if(typeof renderBackupSummary==='function')renderBackupSummary();status('✅ الحفظ التلقائي مفعّل في <b>'+escapeHtml(folderHandle.name||'المجلد المحدد')+'</b><br>آخر حفظ: <b>'+now.toLocaleString('ar-IQ')+'</b><br>سيتم تحديث ملف <b>halawi-auto-backup.json</b> كل 30 دقيقة.','ok');return true;}catch(e){console.error(e);status('❌ تعذر الحفظ في المجلد المحدد. تحقق من صلاحية الكتابة ومن أن المجلد موجود على D أو E أو F.<br>'+escapeHtml(e.message||'خطأ غير معروف'),'err');return false;}}
+  async function choose(){if(!window.showDirectoryPicker){status('⚠️ هذا المتصفح لا يدعم الحفظ المباشر داخل مجلد تختاره. استخدم Chrome أو Edge الحديث.','warn');return;}try{const h=await window.showDirectoryPicker({mode:'readwrite'});folderHandle=h;await saveHandle(h);await writeBackup(true);}catch(e){if(e?.name==='AbortError')return;console.error(e);status('❌ لم يتم اختيار مجلد الحفظ التلقائي.','err');}}
+  async function restore(){folderHandle=await loadHandle();if(!folderHandle)return;const ok=await permission(folderHandle,false);if(ok)status('✅ الحفظ التلقائي مفعّل في <b>'+escapeHtml(folderHandle.name||'المجلد المحدد')+'</b>.<br>سيتم تحديث النسخة كل 30 دقيقة.','ok');else status('⚠️ تم العثور على مجلد الحفظ التلقائي: <b>'+escapeHtml(folderHandle.name||'المجلد المحدد')+'</b>، ويحتاج المتصفح إلى إذن كتابة جديد.','warn');}
+  document.addEventListener('DOMContentLoaded',()=>{document.getElementById('bk-auto-folder-btn')?.addEventListener('click',choose);restore();setInterval(()=>writeBackup(false),INTERVAL);});
+  window.halawiAutomaticBackup=writeBackup;
+})();
+</script>
 <script>
 /* =========================================================================
    مكتبة الحلاوي - نظام الأرشفة والمبيعات
@@ -1561,6 +1799,10 @@ function showApp(){
   const box = document.getElementById('sidebar-user-box');
   box.style.display='block';
   document.getElementById('sidebar-user-name').textContent = '👤 ' + currentUser;
+  const topUser = document.getElementById('topbar-user-name');
+  if(topUser) topUser.textContent = '👤 ' + currentUser;
+  const topLogout = document.getElementById('topbar-logout-btn');
+  if(topLogout) topLogout.style.display = 'inline-flex';
   // عند تحديث الصفحة لا نفتح محتوى أي قسم تلقائياً.
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
@@ -1568,6 +1810,10 @@ function showApp(){
 function showLoginOverlay(){
   document.getElementById('login-overlay').classList.remove('hidden');
   document.getElementById('sidebar-user-box').style.display='none';
+  const topUser = document.getElementById('topbar-user-name');
+  if(topUser) topUser.textContent = '';
+  const topLogout = document.getElementById('topbar-logout-btn');
+  if(topLogout) topLogout.style.display = 'none';
   pendingLoginUser='';
   renderLoginUsersGrid();
   document.getElementById('login-pin-wrap').classList.remove('show');
@@ -1575,12 +1821,14 @@ function showLoginOverlay(){
 }
 document.getElementById('login-confirm-btn').addEventListener('click', attemptLogin);
 document.getElementById('login-pin').addEventListener('keydown', (e)=>{ if(e.key==='Enter') attemptLogin(); });
-document.getElementById('logout-btn').addEventListener('click', ()=>{
+function performLogout(){
   if(!confirm('هل تريد تسجيل الخروج؟')) return;
   currentUser='';
   localStorage.removeItem(CURRENT_USER_KEY);
   showLoginOverlay();
-});
+}
+document.getElementById('logout-btn').addEventListener('click', performLogout);
+document.getElementById('topbar-logout-btn')?.addEventListener('click', performLogout);
 function addedByBadge(name){
   return name ? `<span class="added-by">تمت بواسطة @${escapeHtml(name)}</span>` : '';
 }
@@ -2075,10 +2323,25 @@ let selectedProductForInvoice = null;
 function refreshInvoiceMeta(){
   document.getElementById('inv-number').textContent = COUNTER.invoice;
   document.getElementById('inv-date-input').value = todayStr();
-  document.getElementById('inv-time').textContent = nowTimeStr();
+  const timeInput = document.getElementById('inv-time-input');
+  const timeDisplay = document.getElementById('inv-time');
+  if(timeInput && timeInput.value){
+    timeDisplay.textContent = timeInput.value;
+  }else{
+    if(timeInput) timeInput.value = '';
+    timeDisplay.textContent = nowTimeStr();
+  }
 }
 refreshInvoiceMeta();
-setInterval(()=>{ document.getElementById('inv-time').textContent = nowTimeStr(); }, 15000);
+document.getElementById('inv-time-input')?.addEventListener('input', ()=>{
+  const value = document.getElementById('inv-time-input').value;
+  document.getElementById('inv-time').textContent = value || nowTimeStr();
+});
+setInterval(()=>{
+  const timeInput = document.getElementById('inv-time-input');
+  const timeDisplay = document.getElementById('inv-time');
+  if(timeDisplay && (!timeInput || !timeInput.value)) timeDisplay.textContent = nowTimeStr();
+}, 15000);
 
 const invSearch = document.getElementById('inv-search');
 const invAutocomplete = document.getElementById('inv-autocomplete');
@@ -2229,12 +2492,13 @@ document.getElementById('inv-save-btn').addEventListener('click', ()=>{
   if(currentInvoiceItems.length===0){ showToast('الفاتورة فارغة - أضف مادة واحدة على الأقل','err'); return; }
   const total = currentInvoiceItems.reduce((s,it)=>s+it.total,0);
   const chosenDate = document.getElementById('inv-date-input').value || todayStr();
+  const chosenTime = document.getElementById('inv-time-input').value || nowTimeStr();
   const invoice = {
     id: COUNTER.invoice,
     customerName: document.getElementById('inv-customer').value.trim(),
     date: chosenDate,
     dateDisplay: displayDateFromStr(chosenDate),
-    time: nowTimeStr(),
+    time: chosenTime,
     items: currentInvoiceItems.map(it=>({...it})),
     total,
     fullyReturned:false,
@@ -2293,9 +2557,10 @@ document.getElementById('inv-print-btn').addEventListener('click', ()=>{
     // preview unsaved invoice for print without saving
     const total = currentInvoiceItems.reduce((s,it)=>s+it.total,0);
     const chosenDate = document.getElementById('inv-date-input').value || todayStr();
+    const chosenTime = document.getElementById('inv-time-input').value || nowTimeStr();
     renderPrintArea({
       id: COUNTER.invoice, customerName: document.getElementById('inv-customer').value.trim(),
-      dateDisplay: displayDateFromStr(chosenDate), time: nowTimeStr(), items: currentInvoiceItems, total
+      dateDisplay: displayDateFromStr(chosenDate), time: chosenTime, items: currentInvoiceItems, total
     });
   }
   window.print();
@@ -2305,6 +2570,8 @@ document.getElementById('inv-new-btn').addEventListener('click', ()=>{
   if(currentInvoiceItems.length>0 && !confirm('سيتم إلغاء المواد المضافة للفاتورة الحالية غير المحفوظة. متابعة؟')) return;
   currentInvoiceItems=[]; renderInvoiceItems();
   document.getElementById('inv-customer').value='';
+  const timeInput = document.getElementById('inv-time-input');
+  if(timeInput) timeInput.value='';
   refreshInvoiceMeta();
 });
 renderInvoiceItems();
@@ -5308,6 +5575,81 @@ setTimeout(()=>{ if(typeof initDebtSync==='function') initDebtSync(); },1200);
 
   window.halawiChangeStock=changeStock;
   window.halawiOpenStockEditor=openStockModal;
+})();
+</script>
+
+
+<script id="halawi-home-navigation-v3-js">
+(function(){
+  'use strict';
+  function buildHomeMenus(){
+    const home = document.getElementById('home-screen');
+    if(!home) return;
+    home.querySelectorAll('.home-menu-card').forEach(el=>el.remove());
+
+    const navs = Array.from(document.querySelectorAll('#sidebar .nav-btn[data-sec]'));
+    navs.forEach(nav=>{
+      const clone = nav.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.className = 'home-menu-card';
+      const icon = nav.querySelector('.ic')?.textContent || '📁';
+      const parts = Array.from(nav.childNodes)
+        .filter(n=>n.nodeType===Node.TEXT_NODE)
+        .map(n=>n.textContent.trim())
+        .filter(Boolean);
+      const label = parts.join(' ') || nav.textContent.replace(icon,'').trim();
+      const sub = ({
+        'sec-archive':'إضافة وتحديث المواد والأرشفة',
+        'sec-purchases':'تسجيل فواتير الشراء',
+        'sec-invoice':'إنشاء وحفظ فواتير المبيعات',
+        'sec-invoicelist':'البحث والتعديل في الفواتير',
+        'sec-debts':'إدارة الديون وفواتير الدين',
+        'sec-stock':'متابعة الكميات وحالة المخزون',
+        'sec-returns':'استرجاع المواد والفواتير',
+        'sec-reports':'التقارير اليومية والشهرية',
+        'sec-backup':'النسخ الاحتياطي والمزامنة'
+      })[nav.dataset.sec] || 'فتح القائمة';
+      clone.innerHTML = `<span class="home-ic">${icon}</span><span>${escapeHtml(label)}</span><span class="home-menu-sub">${escapeHtml(sub)}</span>`;
+      clone.addEventListener('click',()=>nav.click());
+      home.appendChild(clone);
+    });
+  }
+
+  function goHome(){
+    document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.getElementById('home-screen')?.classList.remove('hidden');
+    document.getElementById('topbar')?.classList.remove('section-mode');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function openSection(secId){
+    document.getElementById('home-screen')?.classList.add('hidden');
+    document.getElementById('topbar')?.classList.add('section-mode');
+    const sec=document.getElementById(secId);
+    if(sec) setTimeout(()=>sec.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    buildHomeMenus();
+
+    document.querySelectorAll('#sidebar .nav-btn[data-sec]').forEach(nav=>{
+      nav.addEventListener('click',()=>openSection(nav.dataset.sec));
+    });
+
+    document.getElementById('home-btn')?.addEventListener('click',goHome);
+
+    const oldShowApp=window.showApp;
+    if(typeof oldShowApp==='function'){
+      // لا نغيّر الوظيفة الأصلية؛ نضمن فقط أن بدء التشغيل يكون على الشاشة الرئيسية.
+      setTimeout(goHome,0);
+    }else{
+      goHome();
+    }
+  });
+
+  window.halawiGoHome=goHome;
+  window.halawiBuildHomeMenus=buildHomeMenus;
 })();
 </script>
 
