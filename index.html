@@ -327,6 +327,91 @@
   }
   .sidebar-user .logout-btn:hover{background:rgba(255,255,255,.15);}
   .added-by{display:inline-block; font-size:11px; color:var(--brand-dark); background:var(--brand-bg); border-radius:10px; padding:1px 8px; white-space:nowrap;}
+  /* ===== Enhanced login screen v21 ===== */
+  #login-overlay{
+    overflow:hidden !important;
+    background-size:cover !important;
+    background-position:center !important;
+    background-repeat:no-repeat !important;
+    transition:background-image .65s ease, filter .35s ease;
+  }
+  #login-overlay::before{
+    content:"";position:absolute;inset:-20%;
+    background:
+      radial-gradient(circle at 15% 20%,rgba(255,255,255,.16) 0 2px,transparent 3px),
+      radial-gradient(circle at 80% 35%,rgba(255,255,255,.12) 0 1.5px,transparent 2.5px),
+      radial-gradient(circle at 35% 80%,rgba(255,255,255,.10) 0 2px,transparent 3px);
+    background-size:180px 180px,240px 240px,210px 210px;
+    animation:loginAmbient 18s linear infinite;
+    pointer-events:none;opacity:.85;
+  }
+  @keyframes loginAmbient{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(-40px,30px,0) scale(1.05)}}
+  .login-card{
+    position:relative !important;z-index:5;
+    background:rgba(255,255,255,.16) !important;
+    border:1px solid rgba(255,255,255,.34) !important;
+    backdrop-filter:blur(18px) saturate(130%);
+    -webkit-backdrop-filter:blur(18px) saturate(130%);
+    box-shadow:0 18px 55px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.35) !important;
+    animation:loginCardIn .6s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes loginCardIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+  .login-card h2,.login-card p.sub,.login-card label{color:#fff !important;text-shadow:0 1px 8px rgba(0,0,0,.28);}
+  .login-users{position:relative;z-index:6;}
+  .login-user-btn{
+    position:relative;overflow:hidden;
+    background:rgba(255,255,255,.16) !important;
+    color:#fff !important;
+    border:1px solid rgba(255,255,255,.30) !important;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.20),0 7px 20px rgba(0,0,0,.12);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease,background .22s ease;
+  }
+  .login-user-btn::before{
+    content:"";position:absolute;width:18px;height:18px;right:12%;bottom:8px;border-radius:50%;
+    background:rgba(255,255,255,.22);opacity:0;transform:scale(.15);
+    transition:opacity .15s ease,transform .42s ease,box-shadow .45s ease;pointer-events:none;
+  }
+  .login-user-btn::after{
+    content:"";position:absolute;top:-20%;left:-90%;width:36%;height:140%;transform:skewX(-24deg);
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.85),transparent);
+    opacity:0;pointer-events:none;
+  }
+  .login-user-btn:hover{transform:translateY(-4px) scale(1.025);background:rgba(255,255,255,.23) !important;border-color:rgba(255,255,255,.62) !important;box-shadow:0 14px 28px rgba(0,0,0,.2),0 0 0 4px rgba(255,255,255,.05);}
+  .login-user-btn:hover::before{opacity:1;transform:scale(5);box-shadow:0 0 0 16px rgba(255,255,255,.05),0 0 30px 8px rgba(255,255,255,.12);}
+  .login-user-btn:hover::after{opacity:1;animation:loginShine .7s ease forwards;}
+  .login-user-btn.selected{background:rgba(255,255,255,.30) !important;color:#fff !important;border-color:rgba(255,255,255,.82) !important;transform:translateY(-2px) scale(1.02);}
+  @keyframes loginShine{from{left:-90%}to{left:150%}}
+  #login-pin{
+    width:100%;padding:13px 14px;border-radius:10px !important;
+    background:rgba(255,255,255,.18) !important;color:#fff !important;
+    border:1px solid rgba(255,255,255,.34) !important;
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 8px 22px rgba(0,0,0,.10);
+  }
+  #login-pin::placeholder{color:rgba(255,255,255,.75);}
+  #login-pin:focus{outline:2px solid rgba(255,255,255,.72) !important;border-color:#fff !important;}
+  .login-version-badge{
+    position:absolute;top:16px;left:18px;z-index:7;
+    color:#fff;font-size:12px;font-weight:900;letter-spacing:.4px;
+    background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.28);
+    padding:6px 10px;border-radius:999px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  }
+  #login-bg-picker{
+    position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:8;
+    background:rgba(0,0,0,.24);color:#fff;border:1px solid rgba(255,255,255,.30);
+    padding:9px 14px;border-radius:999px;font-family:inherit;font-weight:800;cursor:pointer;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+    box-shadow:0 8px 22px rgba(0,0,0,.16);
+  }
+  #login-bg-picker:hover{background:rgba(0,0,0,.34);}
+  #login-bg-panel{display:none;position:absolute;bottom:62px;left:50%;transform:translateX(-50%);z-index:9;width:min(720px,92vw);max-height:46vh;overflow:auto;padding:12px;border-radius:18px;background:rgba(12,18,26,.62);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 50px rgba(0,0,0,.32);}
+  #login-bg-panel.show{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+  .login-bg-option{height:78px;border:1px solid rgba(255,255,255,.34);border-radius:12px;background-size:cover;background-position:center;position:relative;overflow:hidden;cursor:pointer;transition:.2s;}
+  .login-bg-option span{position:absolute;inset:auto 6px 6px 6px;color:#fff;font-size:11px;font-weight:900;text-shadow:0 1px 5px #000;}
+  .login-bg-option:hover{transform:translateY(-3px);border-color:#fff;}
+  .login-bg-option.active{outline:2px solid #fff;transform:scale(1.02);}
+  @media(max-width:700px){#login-bg-panel.show{grid-template-columns:repeat(2,1fr)}.login-bg-option{height:72px}}
 
   /* ===== إضافة من البرنامج الجديد: الشريط العلوي والتنبيهات ===== */
   #topbar{background:#fff;border-bottom:1px solid var(--grid);padding:10px 26px;display:flex;justify-content:space-between;align-items:center;margin:-22px -26px 22px;position:relative;z-index:100;}
@@ -355,7 +440,7 @@
   لا يتم حذف أو نقل أو تعديل بيانات localStorage/Firebase أثناء التحديث.
 */
 (function(){
-  const APP_VERSION = '3.0.0';
+  const APP_VERSION = '21.0.0';
   const UPDATE_SCRIPT_URL = 'https://www.alhillawi.org/halawi/halawi-update.js';
   const FALLBACK_LATEST_APP_URL = 'https://www.alhillawi.org/halawi/index.html';
   const UPDATE_CHECK_TIMEOUT = 7000;
@@ -784,19 +869,22 @@ body{display:block !important;overflow-x:hidden;}
 <body>
 
 <div id="login-overlay">
+  <div class="login-version-badge">النسخة الحالية: v21</div>
   <div class="login-card">
     <h2>📚 مكتبة الحلاوي</h2>
-    <p class="sub">الرجاء اختيار اسم المستخدم لتسجيل الدخول</p>
+    <p class="sub">مرحباً بك في نظام الإدارة :v21</p>
     <div class="login-users" id="login-users-grid"></div>
     <div class="login-pin-wrap" id="login-pin-wrap">
-      <label>الرمز السري (اختياري)</label>
-      <input type="text" id="login-pin" placeholder="اتركه فارغاً إن لم يوجد رمز" autocomplete="off">
+      <label>🔐 كلمة السر</label>
+      <input type="password" id="login-pin" placeholder="أدخل كلمة السر" autocomplete="current-password">
       <div class="btn-row" style="margin-top:10px;">
-        <button type="button" class="btn good" id="login-confirm-btn" style="width:100%;">دخول</button>
+        <button type="button" class="btn good" id="login-confirm-btn" style="width:100%;">🚀 دخول آمن</button>
       </div>
     </div>
     <div id="login-error"></div>
   </div>
+  <div id="login-bg-panel"></div>
+  <button type="button" id="login-bg-picker">🌄 اختيار الخلفية</button>
 </div>
 
 <div id="sidebar">
@@ -824,7 +912,7 @@ body{display:block !important;overflow-x:hidden;}
 <div id="main">
 
   <div id="topbar">
-    <div style="font-weight:bold;color:var(--brand-dark);">مرحباً بك في نظام الإدارة</div>
+    <div style="font-weight:bold;color:var(--brand-dark);">مرحباً بك في نظام الإدارة :v21</div>
     <div class="topbar-actions">
       <span id="topbar-user-name"></span>
       <button type="button" class="btn secondary sm" id="home-btn">🏠 القائمة الرئيسية</button>
@@ -1527,7 +1615,7 @@ body{display:block !important;overflow-x:hidden;}
   <!-- ================= SECTION 5: REPORTS ================= -->
   <section class="section" id="sec-reports">
     <h2 class="page-title">📊 التقارير اليومية والشهرية</h2>
-    <p class="page-sub">إحصائيات دقيقة عن المبيعات والأرباح.</p>
+    <p class="page-sub">إحصائيات دقيقة عن المبيعات والأرباح ورواتب حيدر وباقر، مع خصم الرواتب من إجمالي مبيعات كل فترة.</p>
 
     <div class="card">
       <div class="tabs">
@@ -1735,7 +1823,7 @@ var zbarWasm=function(A){"use strict";function I(A,I,g,B){return new(g||(g=Promi
   function openDb(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains(STORE))db.createObjectStore(STORE);};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
   async function saveHandle(h){try{const db=await openDb();await new Promise((res,rej)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(h,KEY);tx.oncomplete=res;tx.onerror=()=>rej(tx.error);});db.close();}catch(e){console.warn(e);}}
   async function loadHandle(){try{const db=await openDb();const h=await new Promise((res,rej)=>{const tx=db.transaction(STORE,'readonly');const r=tx.objectStore(STORE).get(KEY);r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error);});db.close();return h;}catch(e){return null;}}
-  function buildData(){return {meta:{app:'مكتبة الحلاوي - نظام الأرشفة والمبيعات',exportedAt:new Date().toISOString(),version:1,automatic:true},products:typeof PRODUCTS!=='undefined'?PRODUCTS:[],invoices:typeof INVOICES!=='undefined'?INVOICES:[],returns:typeof RETURNS!=='undefined'?RETURNS:[],purchases:typeof PURCHASES!=='undefined'?PURCHASES:[],dailyIncome:typeof DAILY_INCOME!=='undefined'?DAILY_INCOME:[],debts:typeof DEBTS!=='undefined'?DEBTS:[],counter:typeof COUNTER!=='undefined'?COUNTER:{invoice:1000}};}
+  function buildData(){return {meta:{app:'مكتبة الحلاوي - نظام الأرشفة والمبيعات',exportedAt:new Date().toISOString(),version:1,automatic:true},products:typeof PRODUCTS!=='undefined'?PRODUCTS:[],invoices:typeof INVOICES!=='undefined'?INVOICES:[],returns:typeof RETURNS!=='undefined'?RETURNS:[],purchases:typeof PURCHASES!=='undefined'?PURCHASES:[],dailyIncome:typeof DAILY_INCOME!=='undefined'?DAILY_INCOME:[],sellerCollections:typeof SELLER_COLLECTIONS!=='undefined'?SELLER_COLLECTIONS:[],debts:typeof DEBTS!=='undefined'?DEBTS:[],counter:typeof COUNTER!=='undefined'?COUNTER:{invoice:1000}};}
   async function permission(h,ask){if(!h?.queryPermission)return false;let p=await h.queryPermission({mode:'readwrite'});if(p==='granted')return true;if(ask&&h.requestPermission){p=await h.requestPermission({mode:'readwrite'});return p==='granted';}return false;}
   async function writeBackup(ask){if(!folderHandle)folderHandle=await loadHandle();if(!folderHandle)return false;if(!await permission(folderHandle,ask)){status('⚠️ تم حفظ اختيار المجلد، لكن المتصفح يحتاج إذن الكتابة. اضغط «اختيار مجلد الحفظ التلقائي» مرة أخرى.','warn');return false;}try{const f=await folderHandle.getFileHandle('halawi-auto-backup.json',{create:true});const w=await f.createWritable();await w.write(JSON.stringify(buildData(),null,2));await w.close();const now=new Date();if(typeof setLastBackupAt==='function')setLastBackupAt(now.toISOString());if(typeof renderBackupSummary==='function')renderBackupSummary();status('✅ الحفظ التلقائي مفعّل في <b>'+escapeHtml(folderHandle.name||'المجلد المحدد')+'</b><br>آخر حفظ: <b>'+now.toLocaleString('ar-IQ')+'</b><br>سيتم تحديث ملف <b>halawi-auto-backup.json</b> كل 30 دقيقة.','ok');return true;}catch(e){console.error(e);status('❌ تعذر الحفظ في المجلد المحدد. تحقق من صلاحية الكتابة ومن أن المجلد موجود على D أو E أو F.<br>'+escapeHtml(e.message||'خطأ غير معروف'),'err');return false;}}
   async function choose(){if(!window.showDirectoryPicker){status('⚠️ هذا المتصفح لا يدعم الحفظ المباشر داخل مجلد تختاره. استخدم Chrome أو Edge الحديث.','warn');return;}try{const h=await window.showDirectoryPicker({mode:'readwrite'});folderHandle=h;await saveHandle(h);await writeBackup(true);}catch(e){if(e?.name==='AbortError')return;console.error(e);status('❌ لم يتم اختيار مجلد الحفظ التلقائي.','err');}}
@@ -1750,7 +1838,7 @@ var zbarWasm=function(A){"use strict";function I(A,I,g,B){return new(g||(g=Promi
    تخزين البيانات محلياً في المتصفح (localStorage)
    ========================================================================= */
 
-const STORE_KEYS = { products:'halawi_products', invoices:'halawi_invoices', returns:'halawi_returns', counter:'halawi_counter', purchases:'halawi_purchases', dailyIncome:'halawi_daily_income' };
+const STORE_KEYS = { products:'halawi_products', invoices:'halawi_invoices', returns:'halawi_returns', counter:'halawi_counter', purchases:'halawi_purchases', dailyIncome:'halawi_daily_income', sellerCollections:'halawi_seller_collections' };
 
 /* =========================================================================
    USERS / LOGIN
@@ -1759,76 +1847,123 @@ const STORE_KEYS = { products:'halawi_products', invoices:'halawi_invoices', ret
    طلب رمز سري لذلك المستخدم).
    ========================================================================= */
 const USERS = ['حيدر','حاسبة اولى','باقر','هدى','حيدر 2','حاسبة 2'];
-const USER_PINS = {}; // مثال: { 'حيدر': '1234' } - اتركها فارغة لعدم استخدام أرقام سرية
+const LOGIN_PASSWORD = '632759';
 const CURRENT_USER_KEY = 'halawi_current_user';
+const LOGIN_AUTH_KEY = 'halawi_login_auth_v21';
+const LOGIN_BG_KEY = 'halawi_login_background_v21';
+const LOGIN_AUTH_TTL = 24 * 60 * 60 * 1000;
+const LOGIN_BACKGROUNDS = [
+  ['غابة خضراء','https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1600&q=85'],
+  ['جبال وضباب','https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1600&q=85'],
+  ['مرعى أخضر','https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1600&q=85'],
+  ['بحيرة وجبال','https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1600&q=85'],
+  ['شلال طبيعي','https://images.unsplash.com/photo-1433086966358-54859d0ed716?auto=format&fit=crop&w=1600&q=85'],
+  ['غابة ضبابية','https://images.unsplash.com/photo-1511497584788-876760111969?auto=format&fit=crop&w=1600&q=85'],
+  ['وادي أخضر','https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?auto=format&fit=crop&w=1600&q=85'],
+  ['غروب جبلي','https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=85'],
+  ['صباح ريفي','https://images.unsplash.com/photo-1473445361085-b9a07f55608b?auto=format&fit=crop&w=1600&q=85'],
+  ['طبيعة ساحرة','https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=1600&q=85']
+];
 let currentUser = localStorage.getItem(CURRENT_USER_KEY) || '';
 let pendingLoginUser = '';
 
-function requireLogin(){ return !!currentUser; }
-
+function getLoginAuth(){
+  try{return JSON.parse(localStorage.getItem(LOGIN_AUTH_KEY) || 'null');}catch(e){return null;}
+}
+function loginAuthValid(){
+  const a=getLoginAuth();
+  return !!(a && a.user && a.at && (Date.now()-Number(a.at) < LOGIN_AUTH_TTL));
+}
+function requireLogin(){
+  if(!currentUser) return false;
+  const a=getLoginAuth();
+  if(!a || a.user!==currentUser || !loginAuthValid()){
+    localStorage.removeItem(CURRENT_USER_KEY);
+    localStorage.removeItem(LOGIN_AUTH_KEY);
+    currentUser='';
+    return false;
+  }
+  return true;
+}
+function applyLoginBackground(index){
+  const i=Math.max(0,Math.min(LOGIN_BACKGROUNDS.length-1,Number(index)||0));
+  localStorage.setItem(LOGIN_BG_KEY,String(i));
+  const overlay=document.getElementById('login-overlay');
+  if(overlay){
+    overlay.style.backgroundImage=`linear-gradient(180deg,rgba(6,18,12,.22),rgba(6,18,12,.48)),url("${LOGIN_BACKGROUNDS[i][1]}")`;
+  }
+  document.querySelectorAll('.login-bg-option').forEach((el,n)=>el.classList.toggle('active',n===i));
+}
+function buildLoginBackgroundPanel(){
+  const panel=document.getElementById('login-bg-panel');
+  if(!panel) return;
+  panel.innerHTML=LOGIN_BACKGROUNDS.map((b,i)=>`<button type="button" class="login-bg-option" data-bg="${i}" style="background-image:linear-gradient(rgba(0,0,0,.08),rgba(0,0,0,.22)),url('${b[1]}')"><span>${escapeHtml(b[0])}</span></button>`).join('');
+  panel.querySelectorAll('.login-bg-option').forEach(btn=>btn.addEventListener('click',()=>{applyLoginBackground(btn.dataset.bg);panel.classList.remove('show');}));
+  applyLoginBackground(localStorage.getItem(LOGIN_BG_KEY)||0);
+}
 function renderLoginUsersGrid(){
-  const grid = document.getElementById('login-users-grid');
-  grid.innerHTML = USERS.map(u=>`<button type="button" class="login-user-btn" data-user="${escapeHtml(u)}">${escapeHtml(u)}</button>`).join('');
-  grid.querySelectorAll('.login-user-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      grid.querySelectorAll('.login-user-btn').forEach(b=>b.classList.remove('selected'));
-      btn.classList.add('selected');
-      pendingLoginUser = btn.dataset.user;
-      document.getElementById('login-error').textContent='';
-      const needsPin = !!USER_PINS[pendingLoginUser];
-      const pinWrap = document.getElementById('login-pin-wrap');
-      document.getElementById('login-pin').value='';
-      pinWrap.classList.add('show');
-      pinWrap.querySelector('label').textContent = needsPin ? 'أدخل الرمز السري' : 'الرمز السري (اختياري)';
-      if(!needsPin) attemptLogin();
-    });
-  });
+  const grid=document.getElementById('login-users-grid');
+  grid.innerHTML=USERS.map(u=>`<button type="button" class="login-user-btn" data-user="${escapeHtml(u)}">👤 ${escapeHtml(u)}</button>`).join('');
+  grid.querySelectorAll('.login-user-btn').forEach(btn=>btn.addEventListener('click',()=>{
+    grid.querySelectorAll('.login-user-btn').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected');
+    pendingLoginUser=btn.dataset.user;
+    document.getElementById('login-error').textContent='';
+    const pinWrap=document.getElementById('login-pin-wrap');
+    const pin=document.getElementById('login-pin');
+    pin.value='';
+    pinWrap.classList.add('show');
+    setTimeout(()=>pin.focus(),120);
+  }));
 }
 function attemptLogin(){
-  if(!pendingLoginUser){ document.getElementById('login-error').textContent='الرجاء اختيار اسم المستخدم'; return; }
-  const needed = USER_PINS[pendingLoginUser];
-  const entered = document.getElementById('login-pin').value.trim();
-  if(needed && entered !== needed){ document.getElementById('login-error').textContent='الرمز السري غير صحيح'; return; }
-  currentUser = pendingLoginUser;
-  localStorage.setItem(CURRENT_USER_KEY, currentUser);
+  if(!pendingLoginUser){document.getElementById('login-error').textContent='الرجاء اختيار اسم المستخدم';return;}
+  const entered=document.getElementById('login-pin').value.trim();
+  if(entered!==LOGIN_PASSWORD){document.getElementById('login-error').textContent='❌ كلمة السر غير صحيحة';return;}
+  currentUser=pendingLoginUser;
+  localStorage.setItem(CURRENT_USER_KEY,currentUser);
+  localStorage.setItem(LOGIN_AUTH_KEY,JSON.stringify({user:currentUser,at:Date.now()}));
   document.getElementById('login-error').textContent='';
   showApp();
 }
 function showApp(){
   document.getElementById('login-overlay').classList.add('hidden');
-  const box = document.getElementById('sidebar-user-box');
+  const box=document.getElementById('sidebar-user-box');
   box.style.display='block';
-  document.getElementById('sidebar-user-name').textContent = '👤 ' + currentUser;
-  const topUser = document.getElementById('topbar-user-name');
-  if(topUser) topUser.textContent = '👤 ' + currentUser;
-  const topLogout = document.getElementById('topbar-logout-btn');
-  if(topLogout) topLogout.style.display = 'inline-flex';
-  // عند تحديث الصفحة لا نفتح محتوى أي قسم تلقائياً.
+  document.getElementById('sidebar-user-name').textContent='👤 '+currentUser;
+  const topUser=document.getElementById('topbar-user-name');
+  if(topUser) topUser.textContent='👤 '+currentUser;
+  const topLogout=document.getElementById('topbar-logout-btn');
+  if(topLogout) topLogout.style.display='inline-flex';
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.section').forEach(sec=>sec.classList.remove('active'));
 }
 function showLoginOverlay(){
   document.getElementById('login-overlay').classList.remove('hidden');
   document.getElementById('sidebar-user-box').style.display='none';
-  const topUser = document.getElementById('topbar-user-name');
-  if(topUser) topUser.textContent = '';
-  const topLogout = document.getElementById('topbar-logout-btn');
-  if(topLogout) topLogout.style.display = 'none';
+  const topUser=document.getElementById('topbar-user-name');
+  if(topUser) topUser.textContent='';
+  const topLogout=document.getElementById('topbar-logout-btn');
+  if(topLogout) topLogout.style.display='none';
   pendingLoginUser='';
   renderLoginUsersGrid();
   document.getElementById('login-pin-wrap').classList.remove('show');
+  document.getElementById('login-pin').value='';
   document.getElementById('login-error').textContent='';
+  applyLoginBackground(localStorage.getItem(LOGIN_BG_KEY)||0);
 }
-document.getElementById('login-confirm-btn').addEventListener('click', attemptLogin);
-document.getElementById('login-pin').addEventListener('keydown', (e)=>{ if(e.key==='Enter') attemptLogin(); });
+document.getElementById('login-confirm-btn').addEventListener('click',attemptLogin);
+document.getElementById('login-pin').addEventListener('keydown',e=>{if(e.key==='Enter')attemptLogin();});
+document.getElementById('login-bg-picker')?.addEventListener('click',()=>document.getElementById('login-bg-panel')?.classList.toggle('show'));
+document.addEventListener('click',e=>{const p=document.getElementById('login-bg-panel');const b=document.getElementById('login-bg-picker');if(p&&p.classList.contains('show')&&!p.contains(e.target)&&e.target!==b)p.classList.remove('show');});
+buildLoginBackgroundPanel();
 function performLogout(){
   if(!confirm('هل تريد تسجيل الخروج؟')) return;
   currentUser='';
   localStorage.removeItem(CURRENT_USER_KEY);
+  localStorage.removeItem(LOGIN_AUTH_KEY);
   showLoginOverlay();
 }
-document.getElementById('logout-btn').addEventListener('click', performLogout);
-document.getElementById('topbar-logout-btn')?.addEventListener('click', performLogout);
 function addedByBadge(name){
   return name ? `<span class="added-by">تمت بواسطة @${escapeHtml(name)}</span>` : '';
 }
@@ -1882,6 +2017,7 @@ function normalizeFirebaseData(val){
     returns: firebaseArray(val && val.returns),
     purchases: firebaseArray(val && val.purchases),
     dailyIncome: firebaseArray(val && val.dailyIncome),
+    sellerCollections: firebaseArray(val && val.sellerCollections),
     counter: (val && val.counter && typeof val.counter==='object') ? val.counter : null
   };
 }
@@ -1906,8 +2042,8 @@ function initFirebaseSync(){
       }
 
       const remote = normalizeFirebaseData(val);
-      const localHasData = PRODUCTS.length || INVOICES.length || RETURNS.length || PURCHASES.length || DAILY_INCOME.length;
-      const remoteHasData = remote.products.length || remote.invoices.length || remote.returns.length || remote.purchases.length || remote.dailyIncome.length;
+      const localHasData = PRODUCTS.length || INVOICES.length || RETURNS.length || PURCHASES.length || DAILY_INCOME.length || SELLER_COLLECTIONS.length;
+      const remoteHasData = remote.products.length || remote.invoices.length || remote.returns.length || remote.purchases.length || remote.dailyIncome.length || remote.sellerCollections.length;
 
       // لا تستبدل بيانات الجهاز بقاعدة فارغة/ناقصة. عند وجود بيانات محلية فقط، ارفعها.
       if(localHasData && !remoteHasData){
@@ -1923,6 +2059,7 @@ function initFirebaseSync(){
       RETURNS = remote.returns;
       PURCHASES = remote.purchases;
       DAILY_INCOME = remote.dailyIncome;
+      if(remote.sellerCollections.length || !SELLER_COLLECTIONS.length) SELLER_COLLECTIONS = remote.sellerCollections;
       if(remote.counter) COUNTER = remote.counter;
 
       saveData(STORE_KEYS.products, PRODUCTS);
@@ -1930,6 +2067,7 @@ function initFirebaseSync(){
       saveData(STORE_KEYS.returns, RETURNS);
       saveData(STORE_KEYS.purchases, PURCHASES);
       saveData(STORE_KEYS.dailyIncome, DAILY_INCOME);
+      saveData(STORE_KEYS.sellerCollections, SELLER_COLLECTIONS);
       saveData(STORE_KEYS.counter, COUNTER);
       applyingRemoteUpdate = false;
       setSyncIndicator('online','متصل - تمت المزامنة');
@@ -1999,6 +2137,7 @@ let INVOICES = loadData(STORE_KEYS.invoices, []);
 let RETURNS  = loadData(STORE_KEYS.returns, []);
 let PURCHASES = loadData(STORE_KEYS.purchases, []);
 let DAILY_INCOME = loadData(STORE_KEYS.dailyIncome, []);
+let SELLER_COLLECTIONS = loadData(STORE_KEYS.sellerCollections, []);
 let COUNTER  = loadData(STORE_KEYS.counter, { invoice: 1000 });
 if(!COUNTER.purchase) COUNTER.purchase = 1000;
 
@@ -2008,6 +2147,7 @@ function persistAll(){
   saveData(STORE_KEYS.returns, RETURNS);
   saveData(STORE_KEYS.purchases, PURCHASES);
   saveData(STORE_KEYS.dailyIncome, DAILY_INCOME);
+  saveData(STORE_KEYS.sellerCollections, SELLER_COLLECTIONS);
   saveData(STORE_KEYS.counter, COUNTER);
   syncToFirebase();
 }
@@ -2018,6 +2158,124 @@ function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+String(d.get
 function nowTimeStr(){ const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
 function nowDisplayDate(){ const d=new Date(); return d.toLocaleDateString('ar-IQ',{year:'numeric',month:'2-digit',day:'2-digit'}); }
 function displayDateFromStr(dateStr){ const d=new Date(dateStr+'T00:00:00'); return isNaN(d)? dateStr : d.toLocaleDateString('ar-IQ',{year:'numeric',month:'2-digit',day:'2-digit'}); }
+
+
+/* =========================================================================
+   SELLER COLLECTION / DAILY COMMISSION
+   قواعد التحصيل:
+   35000-40000 => 5000 لكل شخص
+   45000-75000 => 10000 لكل شخص
+   100000+     => 15000 لكل شخص
+   يمكن حفظ قيمة يدوية لأي تاريخ، وإلا يحسب النظام تلقائياً من مبيعات التاريخ.
+   ========================================================================= */
+function normalizeSellerCollection(item){
+  return {
+    id: item && item.id ? String(item.id) : uid(),
+    date: String((item && item.date) || todayStr()),
+    mode: item && item.mode === 'manual' ? 'manual' : 'auto',
+    haider: Math.max(0, Number(item && item.haider) || 0),
+    baqer: Math.max(0, Number(item && item.baqer) || 0),
+    salesTotal: Math.max(0, Number(item && item.salesTotal) || 0),
+    note: String((item && item.note) || ''),
+    addedBy: String((item && item.addedBy) || ''),
+    createdAt: (item && item.createdAt) || new Date().toISOString(),
+    updatedAt: (item && item.updatedAt) || null
+  };
+}
+SELLER_COLLECTIONS = (Array.isArray(SELLER_COLLECTIONS) ? SELLER_COLLECTIONS : []).map(normalizeSellerCollection);
+
+function getSalesTotalForDate(date){
+  const day=String(date||'');
+  return (Array.isArray(INVOICES)?INVOICES:[]).filter(inv=>String(inv.date||'')===day).reduce((sum,inv)=>{
+    const items=Array.isArray(inv.items)?inv.items:[];
+    return sum + items.reduce((s,it)=>s + invoiceRemainingQty(it)*Number(it.price||0),0);
+  },0);
+}
+function getSellerRateForSales(total){
+  const n=Math.max(0,Number(total)||0);
+  if(n>=100000) return 15000;
+  if(n>=45000 && n<=75000) return 10000;
+  if(n>=35000 && n<=40000) return 5000;
+  return 0;
+}
+function getSellerCollectionForDate(date){
+  const day=String(date||todayStr());
+  const existing=SELLER_COLLECTIONS.find(x=>String(x.date)===day);
+  const salesTotal=getSalesTotalForDate(day);
+  if(existing && existing.mode==='manual') return {...existing,salesTotal};
+  const rate=getSellerRateForSales(salesTotal);
+  return {date:day,mode:'auto',haider:rate,baqer:rate,salesTotal};
+}
+function getSellerTotalsForDates(dates){
+  const unique=[...new Set((dates||[]).map(String))];
+  return unique.reduce((acc,date)=>{
+    const x=getSellerCollectionForDate(date);
+    const sales=Number(x.salesTotal||0);
+    const haider=Number(x.haider||0);
+    const baqer=Number(x.baqer||0);
+    acc.haider+=haider;
+    acc.baqer+=baqer;
+    acc.sales+=sales;
+    acc.netSales+=Math.max(0,sales-haider-baqer);
+    acc.days+=1;
+    return acc;
+  },{haider:0,baqer:0,sales:0,netSales:0,days:0});
+}
+function upsertSellerCollection(record){
+  const normalized=normalizeSellerCollection(record);
+  const idx=SELLER_COLLECTIONS.findIndex(x=>String(x.date)===normalized.date);
+  if(idx>=0){
+    normalized.id=SELLER_COLLECTIONS[idx].id;
+    normalized.createdAt=SELLER_COLLECTIONS[idx].createdAt || normalized.createdAt;
+    normalized.updatedAt=new Date().toISOString();
+    SELLER_COLLECTIONS[idx]=normalized;
+  }else SELLER_COLLECTIONS.push(normalized);
+  saveData(STORE_KEYS.sellerCollections,SELLER_COLLECTIONS);
+  syncToFirebase();
+  return normalized;
+}
+function getWeekDatesForDate(date){
+  const d=dateToLocalDate(date||todayStr());
+  const day=d.getDay(); const diff=day===0?-6:1-day;
+  const start=new Date(d); start.setDate(d.getDate()+diff);
+  const end=new Date(start); end.setDate(start.getDate()+6);
+  const ds=x=>x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');
+  return getDatesBetween(ds(start),ds(end));
+}
+function getMonthDates(month){
+  const m=String(month||''); if(!/^\d{4}-\d{2}$/.test(m)) return [];
+  const [y,mo]=m.split('-').map(Number); return getDatesBetween(m+'-01',m+'-'+String(new Date(y,mo,0).getDate()).padStart(2,'0'));
+}
+function getYearDates(year){
+  const y=Number(year)||new Date().getFullYear(); return getDatesBetween(`${y}-01-01`,`${y}-12-31`);
+}
+function sellerCollectionCard(totals,title){
+  const totalSalary=Number(totals.haider||0)+Number(totals.baqer||0);
+  const netSales=Number.isFinite(Number(totals.netSales)) ? Number(totals.netSales) : Math.max(0,Number(totals.sales||0)-totalSalary);
+  return `<div class="card seller-collection-card" style="border-top:3px solid #6f42c1;margin-top:12px;">
+    <h3>💼 ${escapeHtml(title||'تحصيل حيدر وباقر')}</h3>
+    <div class="grid grid-4">
+      <div class="stat-tile"><div class="v">${fmtMoney(totals.sales)}</div><div class="l">إجمالي المبيعات (د.ع)</div></div>
+      <div class="stat-tile"><div class="v">${fmtMoney(totals.haider)}</div><div class="l">راتب / تحصيل حيدر (د.ع)</div></div>
+      <div class="stat-tile"><div class="v">${fmtMoney(totals.baqer)}</div><div class="l">راتب / تحصيل باقر (د.ع)</div></div>
+      <div class="stat-tile"><div class="v">${fmtMoney(netSales)}</div><div class="l">المتبقي بعد خصم راتب حيدر وباقر (د.ع)</div></div>
+    </div>
+  </div>`;
+}
+
+function sellerSalaryCard(totals,title){
+  const h=Number(totals.haider||0), b=Number(totals.baqer||0);
+  const total=h+b;
+  return `<div class="card" style="border-top:3px solid #0ca30c;margin-top:12px;">
+    <h3>💰 ${escapeHtml(title||'رواتب حيدر وباقر')}</h3>
+    <div class="grid grid-4">
+      <div class="stat-tile"><div class="v">${fmtMoney(h)}</div><div class="l">راتب حيدر</div></div>
+      <div class="stat-tile"><div class="v">${fmtMoney(b)}</div><div class="l">راتب باقر</div></div>
+      <div class="stat-tile"><div class="v">${fmtMoney(total)}</div><div class="l">إجمالي راتب الاثنين</div></div>
+      <div class="stat-tile"><div class="v">${fmtMoney(Math.max(0,Number(totals.sales||0)-total))}</div><div class="l">صافي المبيعات بعد الرواتب</div></div>
+    </div>
+  </div>`;
+}
 
 /* =========================================================================
    GENERIC A4 LIST PRINTING
@@ -3689,10 +3947,13 @@ function renderDailyReport(){
   const topProducts = Object.entries(prodMap).sort((a,b)=>b[1].revenue-a[1].revenue).slice(0,8);
 
   const dailyIncomeTotal = getIncomeTotalForDates([day]);
+  const dailySellerTotals = getSellerTotalsForDates([day]);
 
   document.getElementById('rep-output').innerHTML = `
     <div class="card"><h3>📤 ملخص مبيعات يوم ${day}</h3>${renderStatTiles(stats)}</div>
     ${renderIncomeSummaryCard(dailyIncomeTotal, `دخل/تحصيل يوم ${displayDateFromStr(day)}`)}
+    ${sellerCollectionCard(dailySellerTotals, `تحصيل حيدر وباقر — ${displayDateFromStr(day)}`)}
+    ${sellerSalaryCard(dailySellerTotals, `راتب حيدر وباقر — يوم ${displayDateFromStr(day)}`)}
     ${renderCategoryStats(stats)}
     <div class="card"><h3>الأكثر مبيعاً هذا اليوم</h3>
       ${topProducts.length? `<div style="position:relative;"><canvas id="rep-day-chart"></canvas></div>` : '<p class="hint">لا توجد مبيعات في هذا اليوم بعد.</p>'}
@@ -3726,10 +3987,13 @@ function renderMonthlyReport(){
   const labels = dailyRevenue.map((_,i)=>String(i+1));
 
   const monthlyIncomeTotal = getIncomeTotalForMonth(month);
+  const monthlySellerTotals = getSellerTotalsForDates(getMonthDates(month));
 
   document.getElementById('rep-output').innerHTML = `
     <div class="card"><h3>📤 ملخص مبيعات شهر ${month}</h3>${renderStatTiles(stats)}</div>
     ${renderIncomeSummaryCard(monthlyIncomeTotal, `دخل/تحصيل شهر ${month}`)}
+    ${sellerCollectionCard(monthlySellerTotals, `تحصيل حيدر وباقر — شهر ${month}`)}
+    ${sellerSalaryCard(monthlySellerTotals, `راتب حيدر وباقر — شهر ${month}`)}
     ${renderCategoryStats(stats)}
     <div class="card"><h3>المبيعات اليومية خلال الشهر</h3>
       ${invoices.length? `<div style="position:relative;"><canvas id="rep-month-chart"></canvas></div>` : '<p class="hint">لا توجد مبيعات في هذا الشهر بعد.</p>'}
@@ -3806,6 +4070,61 @@ function getMonthRangeDates(fromMonth,toMonth){
 }
 function renderIncomeSummaryCard(total,label){
   return `<div class="card" style="border-top:3px solid var(--good);margin-top:12px;">\n    <h3>💰 ${escapeHtml(label)}</h3>\n    <div class="grid grid-2">\n      <div class="stat-tile"><div class="v">${fmtMoney(total)}</div><div class="l">إجمالي الدخل/التحصيل (د.ع)</div></div>\n      <div class="stat-tile"><div class="v">${fmtMoney(total)}</div><div class="l">المبلغ المحصل فعلياً (د.ع)</div></div>\n    </div>\n  </div>`;
+}
+
+function ensureSellerIncomeUI(){
+  const root=document.getElementById('rep-income'); if(!root || document.getElementById('seller-income-manager')) return;
+  const card=document.createElement('div'); card.className='card'; card.id='seller-income-manager';
+  card.innerHTML=`<h3>💼 تحصيل حيدر وباقر حسب التاريخ</h3>
+    <p class="hint">اختر التاريخ ثم استخدم التحصيل التلقائي حسب المبيعات أو أدخل القيم يدوياً. الحفظ اليدوي يغلب الحساب التلقائي لذلك التاريخ.</p>
+    <div class="grid grid-4">
+      <div class="field"><label>التاريخ *</label><input type="date" id="seller-income-date"></div>
+      <div class="field"><label>إجمالي مبيعات التاريخ</label><input type="text" id="seller-income-sales" readonly></div>
+      <div class="field"><label>طريقة التحصيل</label><select id="seller-income-mode"><option value="auto">تلقائي حسب المبيعات</option><option value="manual">يدوي</option></select></div>
+      <div class="field"><label>الشريحة التلقائية</label><input type="text" id="seller-income-band" readonly></div>
+    </div>
+    <div class="grid grid-3" style="margin-top:12px;">
+      <div class="field"><label>تحصيل حيدر (د.ع)</label><input type="number" id="seller-income-haider" min="0" step="1000"></div>
+      <div class="field"><label>تحصيل باقر (د.ع)</label><input type="number" id="seller-income-baqer" min="0" step="1000"></div>
+      <div class="field"><label>ملاحظة</label><input type="text" id="seller-income-note" placeholder="مثال: تحصيل يدوي"></div>
+    </div>
+    <div class="btn-row">
+      <button type="button" class="btn good" id="seller-income-save-btn">💾 حفظ التحصيل</button>
+      <button type="button" class="btn secondary" id="seller-income-auto-btn">⚡ تعبئة تلقائية</button>
+    </div>
+    <div id="seller-income-status" class="hint" style="margin-top:8px;"></div>`;
+  const firstCard=root.querySelector(':scope > .card');
+  root.insertBefore(card, firstCard ? firstCard.nextSibling : root.firstChild);
+
+  const dateEl=document.getElementById('seller-income-date');
+  const modeEl=document.getElementById('seller-income-mode');
+  const hEl=document.getElementById('seller-income-haider');
+  const bEl=document.getElementById('seller-income-baqer');
+  const salesEl=document.getElementById('seller-income-sales');
+  const bandEl=document.getElementById('seller-income-band');
+  const noteEl=document.getElementById('seller-income-note');
+  const statusEl=document.getElementById('seller-income-status');
+  const refresh=()=>{
+    const date=dateEl.value||todayStr();
+    const sales=getSalesTotalForDate(date); const autoRate=getSellerRateForSales(sales); const rec=getSellerCollectionForDate(date);
+    salesEl.value=fmtMoney(sales)+' د.ع';
+    bandEl.value=autoRate===15000?'100,000+ → 15,000 لكل شخص':autoRate===10000?'45,000–99,999 → 10,000 لكل شخص':autoRate===5000?'35,000–40,000 → 5,000 لكل شخص':'لا يوجد تحصيل';
+    modeEl.value=rec.mode;
+    hEl.value=rec.haider||0; bEl.value=rec.baqer||0; noteEl.value=rec.note||'';
+    hEl.disabled = modeEl.value!=='manual'; bEl.disabled = modeEl.value!=='manual';
+    statusEl.textContent=rec.mode==='manual' ? '✅ هذا التاريخ محفوظ بتحصيل يدوي.' : '⚡ هذا التاريخ محسوب تلقائياً من إجمالي المبيعات.';
+  };
+  dateEl.value=todayStr();
+  dateEl.addEventListener('change',refresh);
+  modeEl.addEventListener('change',()=>{ if(modeEl.value==='auto') refresh(); else {hEl.disabled=false;bEl.disabled=false;statusEl.textContent='✍️ يمكنك إدخال تحصيل يدوي لهذا التاريخ.';} });
+  document.getElementById('seller-income-auto-btn').addEventListener('click',()=>{modeEl.value='auto';refresh();});
+  document.getElementById('seller-income-save-btn').addEventListener('click',()=>{
+    const date=dateEl.value||todayStr(); const sales=getSalesTotalForDate(date); const mode=modeEl.value==='manual'?'manual':'auto'; const rate=getSellerRateForSales(sales);
+    upsertSellerCollection({date,mode,salesTotal:sales,haider:mode==='manual'?Number(hEl.value||0):rate,baqer:mode==='manual'?Number(bEl.value||0):rate,note:noteEl.value.trim(),addedBy:currentUser||''});
+    refresh(); calculateIncomePeriod(); renderDailyReport(); renderMonthlyReport();
+    showToast('تم حفظ تحصيل حيدر وباقر بنجاح','good');
+  });
+  refresh();
 }
 function renderIncomeHistory(){
   const tbody=document.getElementById('income-history-body');
@@ -3917,12 +4236,20 @@ function calculateIncomePeriod(){
     const f=document.getElementById('income-range-from').value, t=document.getElementById('income-range-to').value;
     return item.date>=f+'-01' && item.date<=t+'-31';
   });
+  let sellerDates=[];
+  if(mode==='daily') sellerDates=[document.getElementById('income-period-date').value || todayStr()];
+  else if(mode==='weekly') sellerDates=getWeekDatesForDate(document.getElementById('income-period-date').value || todayStr());
+  else if(mode==='monthly') sellerDates=getMonthDates(document.getElementById('income-period-month').value || todayStr().slice(0,7));
+  else if(mode==='yearly') sellerDates=getYearDates(document.getElementById('income-period-year').value || new Date().getFullYear());
+  else sellerDates=getMonthRangeDates(document.getElementById('income-range-from').value,document.getElementById('income-range-to').value);
+  const sellerTotals=getSellerTotalsForDates(sellerDates);
   result.innerHTML=`<div class="grid grid-2">
     <div class="stat-tile"><div class="v">${fmtMoney(total)}</div><div class="l">${escapeHtml(label)}</div></div>
     <div class="stat-tile"><div class="v">${mode==='weekly'?'7':records.length}</div><div class="l">${mode==='weekly'?'عدد أيام الفترة':'عدد سجلات التحصيل'}</div></div>
-  </div>`;
+  </div>${sellerCollectionCard(sellerTotals, label+' — تحصيل حيدر وباقر')}${sellerSalaryCard(sellerTotals, label+' — راتب حيدر وباقر')}`;
 }
 function initDailyIncomeUI(){
+  ensureSellerIncomeUI();
   const today=todayStr();
   const ids={
     'income-date-input':today,
@@ -4357,6 +4684,7 @@ function doImport(){
   PURCHASES = pendingImportData.purchases || [];
   DAILY_INCOME = Array.isArray(pendingImportData.dailyIncome) ? pendingImportData.dailyIncome.map(normalizeIncomeRecord) : [];
   if(typeof DEBTS!=='undefined') DEBTS = Array.isArray(pendingImportData.debts) ? pendingImportData.debts.map(normalizeDebtRecord) : [];
+  SELLER_COLLECTIONS = Array.isArray(pendingImportData.sellerCollections) ? pendingImportData.sellerCollections : [];
   COUNTER = pendingImportData.counter || { invoice: 1000 };
   if(!COUNTER.purchase) COUNTER.purchase = 1000;
   persistAll();
@@ -4385,6 +4713,8 @@ function refreshAllViews(){
   const monthlyTab = document.getElementById('rep-monthly');
   if(monthlyTab && monthlyTab.classList.contains('active')) renderMonthlyReport();
   renderBackupSummary();
+  if(typeof renderDailySalesInvoices==='function') renderDailySalesInvoices();
+  const sellerDate=document.getElementById('seller-income-date'); if(sellerDate && typeof getSellerCollectionForDate==='function'){ const e=new Event('change'); sellerDate.dispatchEvent(e); }
 }
 if(typeof initDailyIncomeUI==='function') initDailyIncomeUI();
 refreshAllViews();
@@ -6107,8 +6437,22 @@ setTimeout(()=>{ if(typeof initDebtSync==='function') initDebtSync(); },1200);
     const totalEl = document.getElementById('daily-sales-total');
     const itemsEl = document.getElementById('daily-sales-items-count');
     if(countEl) countEl.textContent = list.length;
-    if(totalEl) totalEl.textContent = dailyFmtMoney(list.reduce((s,inv)=>s+(Number(inv.total)||0),0));
+    const dailyTotal = list.reduce((s,inv)=>s+(Number(inv.total)||0),0);
+    if(totalEl) totalEl.textContent = dailyFmtMoney(dailyTotal);
     if(itemsEl) itemsEl.textContent = list.reduce((s,inv)=>s+(Array.isArray(inv.items)?inv.items.length:0),0);
+
+    let sellerPanel=document.getElementById('daily-sales-seller-panel');
+    if(!sellerPanel){
+      sellerPanel=document.createElement('div'); sellerPanel.id='daily-sales-seller-panel';
+      const statsGrid=countEl?.closest('.grid');
+      if(statsGrid && statsGrid.parentElement) statsGrid.parentElement.insertBefore(sellerPanel,statsGrid.nextSibling);
+    }
+    const seller=getSellerCollectionForDate(today);
+    const rate=getSellerRateForSales(dailyTotal);
+    const band = rate===15000 ? '100,000 د.ع فأعلى → 15,000 لكل شخص' : rate===10000 ? '45,000–99,999 د.ع → 10,000 لكل شخص' : rate===5000 ? '35,000–40,000 د.ع → 5,000 لكل شخص' : 'لا يوجد تحصيل ضمن شرائح التحصيل الحالية';
+    const deductedTotal = Math.max(0,Number(seller.haider||0)+Number(seller.baqer||0));
+    const netAfterSalary = Math.max(0,dailyTotal-deductedTotal);
+    sellerPanel.innerHTML=`<div class="card" style="border-top:3px solid #6f42c1;margin:0 0 14px 0;"><h3>💼 تحصيل حيدر - تحصيل باقر</h3><div class="grid grid-5"><div class="stat-tile"><div class="v">${dailyFmtMoney(dailyTotal)}</div><div class="l">إجمالي مبيعات اليوم (د.ع)</div></div><div class="stat-tile"><div class="v">${dailyFmtMoney(seller.haider)}</div><div class="l">تحصيل حيدر</div></div><div class="stat-tile"><div class="v">${dailyFmtMoney(seller.baqer)}</div><div class="l">تحصيل باقر</div></div><div class="stat-tile"><div class="v">${dailyFmtMoney(netAfterSalary)}</div><div class="l">المتبقي بعد الخصم</div></div><div class="stat-tile"><div class="v" style="font-size:15px;">${band}</div><div class="l">شريحة التحصيل</div></div></div></div>`;
 
     if(list.length===0){
       body.innerHTML = `<tr class="empty-row"><td colspan="6">لا توجد فواتير مبيعات مسجلة لليوم الحالي (${today})</td></tr>`;
