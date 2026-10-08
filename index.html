@@ -327,7 +327,7 @@
   }
   .sidebar-user .logout-btn:hover{background:rgba(255,255,255,.15);}
   .added-by{display:inline-block; font-size:11px; color:var(--brand-dark); background:var(--brand-bg); border-radius:10px; padding:1px 8px; white-space:nowrap;}
-  /* ===== Enhanced login screen v21 ===== */
+  /* ===== Enhanced login screen v22 ===== */
   #login-overlay{
     overflow:hidden !important;
     background-size:cover !important;
@@ -440,7 +440,7 @@
   لا يتم حذف أو نقل أو تعديل بيانات localStorage/Firebase أثناء التحديث.
 */
 (function(){
-  const APP_VERSION = '21.0.0';
+  const APP_VERSION = '22.0.0';
   const UPDATE_SCRIPT_URL = 'https://www.alhillawi.org/halawi/halawi-update.js';
   const FALLBACK_LATEST_APP_URL = 'https://www.alhillawi.org/halawi/index.html';
   const UPDATE_CHECK_TIMEOUT = 7000;
@@ -869,10 +869,10 @@ body{display:block !important;overflow-x:hidden;}
 <body>
 
 <div id="login-overlay">
-  <div class="login-version-badge">النسخة الحالية: v21</div>
+  <div class="login-version-badge">النسخة الحالية: v22</div>
   <div class="login-card">
     <h2>📚 مكتبة الحلاوي</h2>
-    <p class="sub">مرحباً بك في نظام الإدارة :v21</p>
+    <p class="sub">مرحباً بك في نظام الإدارة :v22</p>
     <div class="login-users" id="login-users-grid"></div>
     <div class="login-pin-wrap" id="login-pin-wrap">
       <label>🔐 كلمة السر</label>
@@ -912,7 +912,7 @@ body{display:block !important;overflow-x:hidden;}
 <div id="main">
 
   <div id="topbar">
-    <div style="font-weight:bold;color:var(--brand-dark);">مرحباً بك في نظام الإدارة :v21</div>
+    <div style="font-weight:bold;color:var(--brand-dark);">مرحباً بك في نظام الإدارة :v22</div>
     <div class="topbar-actions">
       <span id="topbar-user-name"></span>
       <button type="button" class="btn secondary sm" id="home-btn">🏠 القائمة الرئيسية</button>
@@ -2162,10 +2162,12 @@ function displayDateFromStr(dateStr){ const d=new Date(dateStr+'T00:00:00'); ret
 
 /* =========================================================================
    SELLER COLLECTION / DAILY COMMISSION
-   قواعد التحصيل:
-   35000-40000 => 5000 لكل شخص
-   45000-75000 => 10000 لكل شخص
-   100000+     => 15000 لكل شخص
+   قواعد التحصيل التصاعدية:
+   أقل من 20,000      => لا يوجد تحصيل
+   20,000–49,999      => 5,000 لكل شخص
+   50,000–79,999      => 10,000 لكل شخص
+   80,000–239,999     => 15,000 لكل شخص
+   240,000 فأعلى      => 20,000 لكل شخص
    يمكن حفظ قيمة يدوية لأي تاريخ، وإلا يحسب النظام تلقائياً من مبيعات التاريخ.
    ========================================================================= */
 function normalizeSellerCollection(item){
@@ -2193,9 +2195,10 @@ function getSalesTotalForDate(date){
 }
 function getSellerRateForSales(total){
   const n=Math.max(0,Number(total)||0);
-  if(n>=100000) return 15000;
-  if(n>=45000 && n<=75000) return 10000;
-  if(n>=35000 && n<=40000) return 5000;
+  if(n>=240000) return 20000;
+  if(n>=80000) return 15000;
+  if(n>=50000) return 10000;
+  if(n>=20000) return 5000;
   return 0;
 }
 function getSellerCollectionForDate(date){
@@ -4108,7 +4111,7 @@ function ensureSellerIncomeUI(){
     const date=dateEl.value||todayStr();
     const sales=getSalesTotalForDate(date); const autoRate=getSellerRateForSales(sales); const rec=getSellerCollectionForDate(date);
     salesEl.value=fmtMoney(sales)+' د.ع';
-    bandEl.value=autoRate===15000?'100,000+ → 15,000 لكل شخص':autoRate===10000?'45,000–99,999 → 10,000 لكل شخص':autoRate===5000?'35,000–40,000 → 5,000 لكل شخص':'لا يوجد تحصيل';
+    bandEl.value=autoRate===20000?'240,000+ → 20,000 لكل شخص':autoRate===15000?'80,000–239,999 → 15,000 لكل شخص':autoRate===10000?'50,000–79,999 → 10,000 لكل شخص':autoRate===5000?'20,000–49,999 → 5,000 لكل شخص':'أقل من 20,000 → لا يوجد تحصيل';
     modeEl.value=rec.mode;
     hEl.value=rec.haider||0; bEl.value=rec.baqer||0; noteEl.value=rec.note||'';
     hEl.disabled = modeEl.value!=='manual'; bEl.disabled = modeEl.value!=='manual';
@@ -6448,11 +6451,12 @@ setTimeout(()=>{ if(typeof initDebtSync==='function') initDebtSync(); },1200);
       if(statsGrid && statsGrid.parentElement) statsGrid.parentElement.insertBefore(sellerPanel,statsGrid.nextSibling);
     }
     const seller=getSellerCollectionForDate(today);
-    const rate=getSellerRateForSales(dailyTotal);
-    const band = rate===15000 ? '100,000 د.ع فأعلى → 15,000 لكل شخص' : rate===10000 ? '45,000–99,999 د.ع → 10,000 لكل شخص' : rate===5000 ? '35,000–40,000 د.ع → 5,000 لكل شخص' : 'لا يوجد تحصيل ضمن شرائح التحصيل الحالية';
+    const commissionSalesTotal=Number(seller.salesTotal||0);
+    const rate=getSellerRateForSales(commissionSalesTotal);
+    const band = rate===20000 ? '240,000 د.ع فأعلى → 20,000 لكل شخص' : rate===15000 ? '80,000–239,999 د.ع → 15,000 لكل شخص' : rate===10000 ? '50,000–79,999 د.ع → 10,000 لكل شخص' : rate===5000 ? '20,000–49,999 د.ع → 5,000 لكل شخص' : 'أقل من 20,000 د.ع → لا يوجد تحصيل';
     const deductedTotal = Math.max(0,Number(seller.haider||0)+Number(seller.baqer||0));
-    const netAfterSalary = Math.max(0,dailyTotal-deductedTotal);
-    sellerPanel.innerHTML=`<div class="card" style="border-top:3px solid #6f42c1;margin:0 0 14px 0;"><h3>💼 تحصيل حيدر - تحصيل باقر</h3><div class="grid grid-5"><div class="stat-tile"><div class="v">${dailyFmtMoney(dailyTotal)}</div><div class="l">إجمالي مبيعات اليوم (د.ع)</div></div><div class="stat-tile"><div class="v">${dailyFmtMoney(seller.haider)}</div><div class="l">تحصيل حيدر</div></div><div class="stat-tile"><div class="v">${dailyFmtMoney(seller.baqer)}</div><div class="l">تحصيل باقر</div></div><div class="stat-tile"><div class="v">${dailyFmtMoney(netAfterSalary)}</div><div class="l">المتبقي بعد الخصم</div></div><div class="stat-tile"><div class="v" style="font-size:15px;">${band}</div><div class="l">شريحة التحصيل</div></div></div></div>`;
+    const netAfterSalary = Math.max(0,commissionSalesTotal-deductedTotal);
+    sellerPanel.innerHTML=`<div class="card" style="border-top:3px solid #6f42c1;margin:0 0 14px 0;"><h3>💼 تحصيل حيدر - تحصيل باقر حسب إجمالي مبيعات اليوم</h3><div class="grid grid-5"><div class="stat-tile"><div class="v">${dailyFmtMoney(commissionSalesTotal)}</div><div class="l">إجمالي مبيعات اليوم (د.ع)</div></div><div class="stat-tile"><div class="v">${dailyFmtMoney(seller.haider)}</div><div class="l">تحصيل حيدر</div></div><div class="stat-tile"><div class="v">${dailyFmtMoney(seller.baqer)}</div><div class="l">تحصيل باقر</div></div><div class="stat-tile"><div class="v">${dailyFmtMoney(netAfterSalary)}</div><div class="l">المتبقي بعد الخصم</div></div><div class="stat-tile"><div class="v" style="font-size:15px;">${band}</div><div class="l">شريحة التحصيل</div></div></div></div>`;
 
     if(list.length===0){
       body.innerHTML = `<tr class="empty-row"><td colspan="6">لا توجد فواتير مبيعات مسجلة لليوم الحالي (${today})</td></tr>`;
